@@ -76,15 +76,15 @@ public class Billard
 		EcranGraphique.fillCircle(balls[n].centre.x, balls[n].centre.y, balls[n].rayon);
 		
 	}
-	static void deplacement(Ball [] balls, int n, double temps)
+	static void deplacement(Ball [] balls, int n)
 	{
 		IniWin();
 		
 		for(int i = 0; i <= n; i++)
 		{
 			EcranGraphique.setColor(balls[i].couleur.r, balls[i].couleur.v, balls[i].couleur.b);
-			balls[i].centre.x = balls[i].centre.x*(int)temps*balls[i].vitesse.x;
-			balls[i].centre.y = balls[i].centre.y*(int)temps*balls[i].vitesse.y;
+			balls[i].centre.x += balls[i].vitesse.x;
+			balls[i].centre.y += balls[i].vitesse.y;
 			EcranGraphique.fillCircle(balls[i].centre.x, balls[i].centre.y, balls[i].rayon);
 		}
 		
@@ -110,11 +110,10 @@ public class Billard
 		
 		//Variables diverses
 		int placement = 0;
-		double temps = 0;
 				
 //-----------------Initialisation du tableau de boules------------------------
 				
-		for(int i = 0; i <= n - 1; i++)
+		for(int i=0; i<= n-1; i++)
 		{
 			balls[i] = new Ball();
 			balls[i].rayon = 10;
@@ -130,7 +129,7 @@ public class Billard
 		//positionnementLigne(balls, n);
 		positionnementTriangle(balls , k);
 		EcranGraphique.flush();
-		while(placement != 1)
+		while(placement!=1)
 		{
 			if(EcranGraphique.getMouseState() == 2)
 			{
@@ -147,12 +146,10 @@ public class Billard
 		}
 //--------------------Debut de la boucle infinie--------------------------------
 		
-		while(1 == 1)
+		while(1==1)
 		{
-			
-			deplacement(balls, n, temps);
+			deplacement(balls, n);
 			EcranGraphique.flush();
-			temps += 1;
 		}
 
 	}
