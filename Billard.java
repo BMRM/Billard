@@ -83,8 +83,8 @@ public class Billard
 		for(int i = 0; i <= n; i++)
 		{
 			EcranGraphique.setColor(balls[i].couleur.r, balls[i].couleur.v, balls[i].couleur.b);
-			balls[i].centre.x = balls[i].centre.x*(int)temps*balls[i].vitesse.x;
-			balls[i].centre.y = balls[i].centre.y*(int)temps*balls[i].vitesse.y;
+			balls[i].centre.x = (int)(balls[i].centre.x + temps * balls[i].vitesse.x);
+			balls[i].centre.y = (int)(balls[i].centre.y + temps * balls[i].vitesse.y);
 			EcranGraphique.fillCircle(balls[i].centre.x, balls[i].centre.y, balls[i].rayon);
 		}
 		
@@ -147,12 +147,14 @@ public class Billard
 		}
 //--------------------Debut de la boucle infinie--------------------------------
 		
-		while(1 == 1)
+		while(true)
 		{
 			
 			deplacement(balls, n, temps);
 			EcranGraphique.flush();
-			temps += 1;
+			
+			temps += 1/5;
+			//EcranGraphique.wait(50);
 		}
 
 	}
