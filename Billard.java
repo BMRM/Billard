@@ -1,161 +1,239 @@
+
 public class Billard 
 {
-//-----------Definition des dimensions de la table
+// ---- Definition ----
 	
-	static int hauteur = 360;
-	static int largeur = 480;
+	static int width = 254*2;
+	static int length = 508*2;
+	static int scale = 200*2;
+	static double dt = 0.1;
 	
-//-----------Toutes les structures :------------
+// ---- structure -----
 	
-	static class Coord
+	static class Box
 	{
-		int x,y;
+		double width = 1.27;
+		double length = 2.54;
 	}
-	static class Couleur
+	
+	static class Vector
 	{
-		int r,v,b;
+		double x, y;
+		double intensite;
+	}
+	
+	static class Color
+	{
+		int r, v, b;
 	}
 	
 	static class Ball
 	{
-		int rayon;
-		Coord vitesse = new Coord();
-		Coord centre = new Coord();
-		Couleur couleur = new Couleur();
-		
+		double rayon;
+		double x, y;
+		Vector vitesse = new Vector();
+		double weight;
 	}
 	
-//------------Tout les Sousprog :---------------
+	static class RenderBall
+	{
+		int rayon;
+		int x, y;
+		Color couleur = new Color();
+	}
+
+// ---- Sousprog ----- 
 	
-	static void IniWin()
+	static void iniWin()
 	{
 		EcranGraphique.setColor(0, 10, 0);
-		EcranGraphique.fillRect(0, 0, largeur, hauteur);
+		EcranGraphique.fillRect(0, 0, length + 20, width + 20);
 		EcranGraphique.setColor(0, 50, 0);
-		EcranGraphique.fillRect(10, 10, largeur-20, hauteur-20);
+		EcranGraphique.fillRect(10, 10, length, width);
 	}
 	
-	static void positionnementLigne(Ball [] balls , int n)
+	static void calcPosLine(Box box, Ball [] balls, int n)
 	{
-		for(int i=0; i<= n-1; i++)
+		for (int i = 0; i <= n - 1; i++)
 		{
-			EcranGraphique.setColor(balls[i].couleur.r, balls[i].couleur.v, balls[i].couleur.b);
-			balls[i].centre.x = 25 + (largeur/n) * i;
-			balls[i].centre.y = hauteur/2;
-			EcranGraphique.fillCircle(balls[i].centre.x, balls[i].centre.y, balls[i].rayon);
+			balls[i].x = 0.3 + (box.length/(n+1)) * i;
+			balls[i].y = box.width/2;
 		}
 	}
 	
-	static void positionnementTriangle(Ball [] balls , int n)
+	static void calcPosTriangle(Box box, Ball [] balls , int k)
 	{
-		int decal = 0;
+		double decal = 0;
 		int b = 0;
-		
-		for(int i=1; i<= n; i++)
+		int n = (k * (k+1)/2) + 1;
+		balls[n - 1].x = box.length/3; 
+		balls[n - 1].y = box.width/2;
+		for (int i = 1; i <= k; i++)
 		{
 			
-			for(int j=0; j <= i-1; j++)
+			for (int j = 0; j <= i - 1; j++)
 			{
-				EcranGraphique.setColor(balls[b].couleur.r, balls[b].couleur.v, balls[b].couleur.b);
-				balls[b].centre.x = (largeur/2) + decal;
-				balls[b].centre.y = (hauteur/2) + (2 * balls[b].rayon * j) - (decal/2);
-				
-				EcranGraphique.fillCircle(balls[b].centre.x, balls[b].centre.y, balls[b].rayon);
+				balls[b].x = (2 * box.length / 3) + decal;
+				balls[b].y = (box.width/2) + (2 * (balls[b].rayon + 0.01) * j) - ((decal)/2);
 				b++;
 			}
 			
-			decal += 2*balls[i].rayon;
+			decal += (2 * balls[i].rayon);
 		}
 	}
 	
-	static void positionnementBouleBlanche(Ball [] balls ,int x, int y, int n)
+	static void evolve(Box box,Ball [] balls, int n, double dt)
 	{
-		EcranGraphique.setColor(255, 255, 255);
-		balls[n].centre.x = x;
-		balls[n].centre.y = y;
-		EcranGraphique.fillCircle(balls[n].centre.x, balls[n].centre.y, balls[n].rayon);
 		
-	}
-	static void deplacement(Ball [] balls, int n, double temps)
-	{
-		IniWin();
-		
-		for(int i = 0; i <= n; i++)
+		for(int i = 0; i < n; i++)
 		{
-			EcranGraphique.setColor(balls[i].couleur.r, balls[i].couleur.v, balls[i].couleur.b);
-			balls[i].centre.x = (int)(balls[i].centre.x + temps * balls[i].vitesse.x);
-			balls[i].centre.y = (int)(balls[i].centre.y + temps * balls[i].vitesse.y);
-			EcranGraphique.fillCircle(balls[i].centre.x, balls[i].centre.y, balls[i].rayon);
+			
+			balls[i].x = (balls[i].x + dt * balls[i].vitesse.intensite * balls[i].vitesse.x);
+			balls[i].y = (balls[i].y + dt * balls[i].vitesse.intensite * balls[i].vitesse.y);
+			balls[i].vitesse.intensite *= 0.99;
+			chocBox(box, balls[i]);
+			chocBalls(balls, n);
+		}	
+	}
+	
+	static void render(RenderBall[]renderballs, Ball []balls, int n)
+	{
+		iniWin();
+		for (int i = 0; i < n; i++)
+		{
+			renderballs[i].x = (int)(balls[i].x * scale) + 10;
+			renderballs[i].y = (int)(balls[i].y * scale) + 10;
+			EcranGraphique.setColor(renderballs[i].couleur.r, renderballs[i].couleur.v, renderballs[i].couleur.b);
+			EcranGraphique.fillCircle(renderballs[i].x, renderballs[i].y, renderballs[i].rayon);
+		}
+		EcranGraphique.flush();
+	}
+	
+	static void chocBox(Box box, Ball ball)
+	{
+		if ((ball.y + ball.rayon > box.width ) || (ball.y - ball.rayon < 0))
+		{
+			if (ball.y + ball.rayon > box.width )
+				ball.y = box.width - ball.rayon;
+			else if (ball.y - ball.rayon < 0)
+				ball.y = ball.rayon;
+			ball.vitesse.y = - ball.vitesse.y;
 		}
 		
+		if ((ball.x + ball.rayon > box.length ) || (ball.x - ball.rayon < 0))
+		{
+			if (ball.x + ball.rayon > box.length )
+				ball.x = box.length - ball.rayon;
+			else if (ball.x - ball.rayon < 0)
+				ball.x = ball.rayon;
+			ball.vitesse.x = - ball.vitesse.x;
+		}
 	}
-	 
-//------------------------------------------------------------Main----------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------------------------------------------------
+
+	static void chocBalls(Ball[] balls, int n)
+	{
+		double mu;
+		double cos;
+		double sin;
+		int a;
+		int b;
+		for (int i = 0; i < n; i++)
+		{
+			for (int j = i; j < n; j++)
+			{
+				if(((Math.sqrt(Math.pow(balls[i].x - balls[j].x, 2) + Math.pow(balls[i].y - balls[j].y, 2)) - balls[i].rayon - balls[j].rayon) <= 0) && i != j)
+				{
+					
+					mu = balls[i].weight / balls[j].weight;
+					cos = (balls[i].y - balls[j].y) / balls[i].rayon + balls[j].rayon;
+					sin = (balls[i].x - balls[j].x) / balls[i].rayon + balls[j].rayon;
+					
+					if(balls[i].vitesse.intensite > balls[j].vitesse.intensite)
+					{
+						a = i;
+						b = j;
+					}
+					else
+					{
+						a = j;
+						b = i;
+					}
+					
+					
+					
+						balls[b].vitesse.x = (2 * mu * Math.pow(sin, 2) * balls[a].vitesse.x) / (mu + 1);
+						balls[b].vitesse.y = -(2 * mu * sin * cos * balls[a].vitesse.y )/ (mu + 1);
+						balls[a].vitesse.x = (mu - 1 + 2 * Math.pow(cos, 2) * balls[a].vitesse.x) / (mu + 1);
+						balls[a].vitesse.y = (2 * sin * cos * balls[a].vitesse.y) / (mu + 1);
+		
+					System.out.println("choc");
+				}
+				
+				
+			}
+		}
+
+	}
+	
+// ---------------------------------------------------------------------- Main ----------------------------------------
+// --- -----------------------------------------------------------------------------------------------------------------
 	
 	public static void main(String[] args)
 	{
 		
 		//taille de la base du triangle pour un positionnement classique
-		int k = 5;
+		int k = 1;
 		
 		//nombre de boule totale pour positionnement classique
-		int n = k * (k+1)/2;
+		int n = (k * (k+1)/2) + 1;
 		
 		//nombre de boule pour positionnement en ligne:
-		//int n = 8;
+		//int nline = 4;
 		
-		//déclaration du tableau des boules
+		//inititalisation des tableau de boule
 		Ball [] balls = new Ball[n + 1];
+		RenderBall [] renderballs = new RenderBall[n + 1];
+		Box box = new Box();
 		
-		//Variables diverses
-		int placement = 0;
-		double temps = 0;
-				
-//-----------------Initialisation du tableau de boules------------------------
-				
-		for(int i = 0; i <= n - 1; i++)
+		for(int i = 0; i < n ; i++)
 		{
+			//Def du tableau de position
 			balls[i] = new Ball();
-			balls[i].rayon = 10;
-			balls[i].couleur.r = ((int)(Math.random() * 255));
-			balls[i].couleur.v = ((int)(Math.random() * 255));
-			balls[i].couleur.b = ((int)(Math.random() * 255));
-		}
-		
-//-------------------Initialisation de la fenêtre graphique de départ-------------------
-		
-		EcranGraphique.init(50,50,largeur+100,hauteur+100,largeur,hauteur,"billard");
-		IniWin();
-		//positionnementLigne(balls, n);
-		positionnementTriangle(balls , k);
-		EcranGraphique.flush();
-		while(placement != 1)
-		{
-			if(EcranGraphique.getMouseState() == 2)
+			balls[i].rayon = 0.03;
+			balls[i].vitesse.x = 0;//((Math.random() - 0.5) * 2);
+			balls[i].vitesse.y = 0;//((Math.random() - 0.5) * 2);
+			balls[i].vitesse.intensite = 0.5;
+			balls[i].weight = 1;
+			
+			//Def du tableau de rendu
+			renderballs[i] = new RenderBall();
+			renderballs[i].rayon = (int)(balls[i].rayon * scale);
+			renderballs[i].couleur.r = ((int)(Math.random() * 250));
+			renderballs[i].couleur.v = ((int)(Math.random() * 250));
+			renderballs[i].couleur.b = ((int)(Math.random() * 250));
+			if( i == n - 1)
 			{
-				balls[n] = new Ball();
-				balls[n].rayon = 10;
-				balls[n].couleur.r = 255;
-				balls[n].couleur.v = 255;
-				balls[n].couleur.b = 255;
-				balls[n].vitesse.x = 1;
-				positionnementBouleBlanche(balls, EcranGraphique.getMouseX(),EcranGraphique.getMouseY(), n);
-				placement = 1;
-				EcranGraphique.flush();
+				balls[i].vitesse.x = 0.25;//((Math.random() - 0.5) * 2);
+				balls[i].vitesse.y = 1.1;//((Math.random() - 0.5) * 2);
+				renderballs[i].couleur.r = 255;
+				renderballs[i].couleur.v = 255;
+				renderballs[i].couleur.b = 255;
 			}
 		}
-//--------------------Debut de la boucle infinie--------------------------------
+
+		EcranGraphique.init(50,50,length+100, width+100, length + 20, width + 20, "billard");
+		iniWin();
+		calcPosTriangle(box, balls , k);
+		//calcPosLine(box, balls , nline);
+		render(renderballs, balls, n);
+		EcranGraphique.flush();
 		
 		while(true)
 		{
-			
-			deplacement(balls, n, temps);
-			EcranGraphique.flush();
-			
-			temps += 1/5;
-			//EcranGraphique.wait(50);
-		}
-
+			evolve(box, balls, n, dt);
+			render(renderballs, balls,n);
+			EcranGraphique.wait(5);
+		}	
+		
 	}
-}	
+}
