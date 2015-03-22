@@ -12,8 +12,8 @@ public class Billard
 
 	static class Box
 	{
-		double width = 1.27;
-		double length = 2.54;
+		static double width = 1.27;
+		static double length = 2.54;
 	}
 
 	static class Vector
@@ -82,6 +82,16 @@ public class Billard
 		}
 	}
 
+    static void formeTrigo(Vector v)
+    {
+        v.module = Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2));
+        if (v.module != 0)
+        {
+            v.x /= v.module;
+            v.y /= v.module;
+        }
+    }
+
     static void evolve(Ball ball, double dt)
     {
         ball.x += dt * ball.vitesse.module * ball.vitesse.x;
@@ -92,12 +102,7 @@ public class Billard
 	static void evolve(Box box,Ball [] balls, int n, double dt)
 	{
 		for (int i = 0; i < n; i++)
-		{
-            if (!chocBox(box, balls[i], dt) && !chocBalls(balls, i, n, dt))
-                evolve(balls[i], dt);
-            else
-                Ecran.afficher("Choc\n");
-		}
+            evolve(balls[i], dt);
 	}
 
 	static void render(RenderBall[]renderballs, Ball []balls, int n)
@@ -113,7 +118,7 @@ public class Billard
 		EcranGraphique.flush();
 	}
 
-	static boolean chocBox(Box box, Ball ball, double dt)
+	static boolean chocBox(Ball ball, double dt)
 	{
         double t;
         double vx = ball.vitesse.module * ball.vitesse.x;
@@ -127,7 +132,7 @@ public class Billard
             evolve(ball, dt - t);
             return true;
         }
-        t = (box.length - ball.rayon - ball.x) / vx;
+        t = (Box.length - ball.rayon - ball.x) / vx;
         if (t >= 0 && t < dt)
         {
             evolve(ball, t);
@@ -154,51 +159,63 @@ public class Billard
         return false;
 	}
 
-    static boolean chocBalls(Ball[] balls, int i, int n, double dt)
+    static double evolve(Ball[] balls, int n, double dt)
     {
-        double mu;
-        double cos;
-        double sin;
         double t = dt;
         double tmp;
-        int j = 0;
+        int k = 0;
+        int l = 0;
 
-        for (int k = i + 1; k < n; k++)
+        for (int i = 0; i < n; i++)
         {
-            // t = solution of the choc equation
-            tmp = dtChocBall(balls[i], balls[k], dt);
+            for (int j = i + 1; j < n; j++)
+            {
+                tmp = dtChocBall(balls[i], balls[k], dt);
+                if (tmp != -1 && tmp < t)
+                {
+                    // Get the first choc
+                    t = tmp;
+                    k = i;
+                    l = j;
+                }
+            }
+            tmp = dtChocBox(ball[i], t);
             if (tmp != -1 && tmp < t)
             {
-                // Get the first choc
+                k = i;
                 t = tmp;
-                j = k;
+                l = 0;
             }
         }
-        if (j > 0)
+        if (t < dt)
         {
-            // Set balls to the choc position
-            evolve(balls[i], t);
-            evolve(balls[j], t);
-            // Set new velocity after the choc
-            mu = balls[i].weight / balls[j].weight;
-            cos = (balls[i].x - balls[j].x) / (balls[i].rayon + balls[j].rayon);
-            sin = (balls[i].y - balls[j].y) / (balls[i].rayon + balls[j].rayon);
-            balls[i].vitesse.x = (mu - 1 + 2 * Math.pow(cos, 2)) / (mu + 1);
-            balls[i].vitesse.y = (2 * sin * cos) / (mu + 1);
-            balls[j].vitesse.x = (2 * mu * Math.pow(sin, 2)) / (mu + 1);
-            balls[j].vitesse.y = -(2 * mu * sin * cos) / (mu + 1);
-
-            // Elastic choc : the higher velocity is preserved
-            balls[i].vitesse.module = Math.max(balls[i].vitesse.module, balls[j].vitesse.module);
-            balls[j].vitesse.module = balls[i].vitesse.module;
-            Ecran.afficher(balls[j].vitesse.module);
-
-            // Evolve balls after the choc to reach dt
-            evolve(balls[i], dt - t);
-            evolve(balls[j], dt - t);
-            return true;
+            evolve(balls, t);
+            if (l > 0)
+            {
+                (balls, n, t);
+                chocElastic(balls[k], balls[j]);
+            }
+            else
+                chocBox(balls[k]);
+            return t;
         }
-        return false;
+        else
+            evolve(balls, n, dt);
+        return dt;
+    }
+
+    static void chocElastic(Ball b1, Ball b2)
+    {
+        double mu = b1.weight / b2.weight;
+        double cos = (b1.x - b2.x) / (b1.rayon + b2.rayon);
+        double sin = (b1.y - b2.y) / (b1.rayon + b2.rayon);
+
+        b1.vitesse.x = b1.vitesse.module * (mu - 1 + 2 * Math.pow(cos, 2)) / (mu + 1);
+        b1.vitesse.y = b1.vitesse.module * (2 * sin * cos) / (mu + 1);
+        b2.vitesse.x = b2.vitesse.module * (2 * mu * Math.pow(sin, 2)) / (mu + 1);
+        b2.vitesse.y = b2.vitesse.module * (-2 * mu * sin * cos) / (mu + 1);
+        formeTrigo(b1.vitesse);
+        formeTrigo(b2.vitesse);
     }
 
     static double dtChocBall(Ball b1, Ball b2, double dt)
@@ -281,7 +298,9 @@ public class Billard
 
 		while(true)
 		{
-			evolve(box, balls, n, dt);
+            t = 0;
+            while (t < dt)
+			    t = evolve(box, balls, n, dt);
 			render(renderballs, balls,n);
 			EcranGraphique.wait(5);
 		}
