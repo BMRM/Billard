@@ -245,9 +245,10 @@ public class Billard
         double m2 = b2.m;
 
         double alpha = Math.atan((b1.p.y - b2.p.y) / (b1.p.x - b2.p.x)) - Math.PI / 2;
+
         Ecran.afficher("tan a = ", (b1.p.y - b2.p.y) / (b1.p.x - b2.p.x), "\n");
-        double a1 = (b1.v.x == 0) ? -alpha : Math.atan(b1.v.y / b1.v.x) - alpha;
-        double a2 = (b2.v.x == 0) ? -alpha : Math.atan(b2.v.y / b2.v.x) - alpha;
+        double a1 = (b1.v.x == 0) ? -alpha : Math.atan(b1.v.y / b1.v.x) + alpha;
+        double a2 = (b2.v.x == 0) ? -alpha : Math.atan(b2.v.y / b2.v.x) + alpha;
 
         double th1 = (b1.v.x == 0) ? Math.PI / 2 :
         Math.atan((m1 - m2) / (m1 + m2) * Math.tan(a1) + ((2 * m2) / (m1 + m2)) * (v2 / v1) * (Math.sin(a2) / Math.cos(a1)));
@@ -264,12 +265,12 @@ public class Billard
         Ecran.afficher("th : ", th1, "  ", th2, "\n");
         Ecran.afficher("new v1, v2 : ", newV1, "  ", newV2, "\n");
 
-        b1.v.x = newV1 * Math.cos(th1 + alpha + Math.PI);
-        b1.v.y = newV1 * Math.sin(th1 + alpha + Math.PI);
-        Ecran.afficher("th - alpha : ", th1 + alpha + Math.PI, "  ", th2 + alpha, "\n");
+        if (alpha < - Math.PI / 2)
+            th1 += Math.PI;
+        b1.v.x = newV1 * Math.cos(th1 + alpha);
+        b1.v.y = newV1 * Math.sin(th1 + alpha);
         b2.v.x = newV2 * Math.cos(th2 + alpha);
         b2.v.y = newV2 * Math.sin(th2 + alpha);
-        Ecran.afficher("---- cos : ", Math.cos(th2 + alpha), "  sin : ", Math.sin(th2 + alpha), "\n");
 
 
 
