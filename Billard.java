@@ -57,7 +57,7 @@ public class Billard
 	{
 		for (int i = 0; i <= n - 1; i++)
 		{
-			balls[i].x = 0.3 + (Box.length/(n+1)) * i;
+			balls[i].x = (Box.length/(n+1)) * i;
 			balls[i].y = Box.width/2;
 		}
 	}
@@ -75,7 +75,7 @@ public class Billard
 			for (int j = 0; j <= i - 1; j++)
 			{
 				balls[b].x = (2 * Box.length / 3) + decal;
-				balls[b].y = (Box.width/2) + (2 * (balls[b].r + 0.01) * j) - ((decal)/2);
+				balls[b].y = (Box.width/2) + (2 * (balls[b].r) * j) - ((decal)/2);
 				b++;
 			}
 
@@ -223,13 +223,34 @@ public class Billard
         }
         Ecran.afficher("avant -> v1.x : ", b1.v.x, ", v2.x : ", b2.v.x, "\n");
 
-        double vgx = (b1.m * b1.v.x + b2.m * b2.v.x) / (b1.m + b2.m);
-        double vgy = (b1.m * b1.v.y + b2.m * b2.v.y) / (b1.m + b2.m);
+        double m1 = (b1.m - b2.m) / (b1.m + b2.m);
+        double m2 = (2 * b1.m) / (b1.m + b2.m);
+        double alpha = Math.atan((b1.x - b2.x) / (b1.y - b2.y));
+        double a1 = Math.atan(b1.v.x / b1.v.y) + alpha;
+        double a2 = Math.atan(b2.v.x / b2.v.y) + alpha;
+
+        double th1 = Math.atan(m1 * Math.tan(a1) + m2 * b2.v.y / b1.v.x);
+        double th2 = Math.atan(-m1 * Math.tan(a2) + m2 * b1.v.y / b2.v.x);
+
+        double v1 = Math.sqrt(Math.pow(m1 * b1.v.y + m2 * b2.y, 2) + Math.pow(b1.x, 2));
+        double v2 = Math.sqrt(Math.pow(-m1 * b2.v.y + m2 * b1.y, 2) + Math.pow(b2.x, 2));
+
+
+        b1.v.x = v1 * Math.cos(th1 + alpha);
+        b1.v.y = v1 * Math.sin(th1 + alpha);
+        b2.v.x = v2 * Math.cos(th2 + alpha);
+        b2.v.y = v2 * Math.sin(th2 + alpha);
+
+
+
+        /*double vgx = (b1.m * b1.v.x + b2.m * b2.v.x) / (b1.m + b2.m);
+        double vgy = (b1.m * b1.v.y + b2.m * b2.v.y) / (b1.m + b2.m);i
+
        Ecran.afficher("centre gravite v : ", 2 * vgx - b2.v.x, "\n");
-        b1.v.x = 2 * vgx - b1.v.x;
+        b1.v.x = (2 * vgx - module(b1.v)) * ;
         b1.v.y = 2 * vgy - b1.v.y;
         b2.v.x = 2 * vgx - b2.v.x;
-        b2.v.y = 2 * vgy - b2.v.y;
+        b2.v.y = 2 * vgy - b2.v.y;*/
 
         /*double mu = b1.m / b2.m;
         double cos = (b1.x - b2.x) / (b1.r + b2.r);
@@ -255,7 +276,7 @@ public class Billard
 		int n = (k * (k+1)/2) + 1;
 
 		//nombre de boule pour positionnement en ligne:
-		//int nline = 4;
+		//int n = 4;
 
 		//inititalisation des tableau de boule
 		Ball [] balls = new Ball[n + 1];
@@ -266,8 +287,8 @@ public class Billard
 			//Def du tableau de position
 			balls[i] = new Ball();
 			balls[i].r = 0.03;
-			balls[i].v.x = (Math.random() - 0.5) * 0.1;
-			balls[i].v.y = (Math.random() - 0.5) * 0.1;
+			balls[i].v.x = (Math.random() - 0.5) * 0.001;
+			balls[i].v.y = (Math.random() - 0.5) * 0.001;
 			balls[i].m = 1;
 
 			//Def du tableau de rendu
@@ -287,7 +308,7 @@ public class Billard
 		EcranGraphique.init(50,50,length+100, width+100, length + 20, width + 20, "billard");
 		iniWin();
 		calcPosTriangle(balls , k);
-		//calcPosLine(balls , nline);
+		//calcPosLine(balls , n);
 		render(renderballs, balls, n);
 		EcranGraphique.flush();
 
