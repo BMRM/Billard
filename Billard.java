@@ -66,8 +66,8 @@ public class Billard
 		double decal = 0;
 		int b = 0;
 		int n = (k * (k+1)/2) + 1;
-		balls[n - 1].p.x = Box.length/3;
-		balls[n - 1].p.y = Box.width/2 - 0.02;
+		balls[n - 1].p.x = 2 * Box.length/3;
+		balls[n - 1].p.y = Box.width/3;
 		for (int i = 1; i <= k; i++)
 		{
 
@@ -151,8 +151,10 @@ public class Billard
             if (l > 0)
                 chocBalls(balls[k], balls[l]);
             else
+            {
                 chocBox(balls[k]);
-            evolve(balls, n, 0.00001);
+                evolve(balls, n, 0.000001);
+            }
             return t;
         }
         else
@@ -237,7 +239,6 @@ public class Billard
             b1 = b2;
             b2 = tmp;
         }
-        Ecran.afficher("avant -> v1.x : ", b1.v.x, ", v2.x : ", b2.v.x, "\n");
 
         double v1 = module(b1.v);
         double v2 = module(b2.v);
@@ -245,25 +246,15 @@ public class Billard
         double m2 = b2.m;
 
         double alpha = Math.atan((b1.p.y - b2.p.y) / (b1.p.x - b2.p.x)) - Math.PI / 2;
+        double a1 = (b1.v.x == 0 && b1.v.y == 0) ? Math.PI / 2 + alpha : Math.atan(b1.v.y / b1.v.x) + alpha;
+        double a2 = (b2.v.x == 0 && b2.v.y == 0) ? Math.PI / 2 + alpha : Math.atan(b2.v.y / b2.v.x) + alpha;
+        Ecran.afficher(b1.v.y / b1.v.x, "  ", b2.v.y / b2.v.x, "\n");
 
-        Ecran.afficher("tan a = ", (b1.p.y - b2.p.y) / (b1.p.x - b2.p.x), "\n");
-        double a1 = (b1.v.x == 0) ? -alpha : Math.atan(b1.v.y / b1.v.x) + alpha;
-        double a2 = (b2.v.x == 0) ? -alpha : Math.atan(b2.v.y / b2.v.x) + alpha;
-
-        double th1 = (b1.v.x == 0) ? Math.PI / 2 :
-        Math.atan((m1 - m2) / (m1 + m2) * Math.tan(a1) + ((2 * m2) / (m1 + m2)) * (v2 / v1) * (Math.sin(a2) / Math.cos(a1)));
-        double th2 = (b2.v.x == 0) ? Math.PI / 2 :
-        Math.atan((b2.m - b1.m) / (b1.m + b2.m) * Math.tan(a2) + ((2 * b1.m) / (b1.m + b2.m)) * (v1 / v2) * (Math.sin(a1) / Math.cos(a2)));
+        double th1 = Math.atan((m1 - m2) / (m1 + m2) * Math.tan(a1) + ((2 * m2) / (m1 + m2)) * (v2 / v1) * (Math.sin(a2) / Math.cos(a1)));
+        double th2 = Math.atan((m2 - m1) / (m1 + m2) * Math.tan(a2) + ((2 * m1) / (m1 + m2)) * (v1 / v2) * (Math.sin(a1) / Math.cos(a2)));
 
         double newV1 = Math.sqrt(Math.pow((m1 - m2) / (m1 + m2) * (v1 * Math.sin(a1)) + (2 * m2) / (m1 + m2) * (v2 * Math.sin(a2)), 2) + Math.pow(v1 * Math.cos(a1), 2));
         double newV2 = Math.sqrt(Math.pow((m2 - m1) / (m1 + m2) * (v2 * Math.sin(a2)) + (2 * m1) / (m1 + m2) * (v1 * Math.sin(a1)), 2) + Math.pow(v2 * Math.cos(a2), 2));
-        //double v1 = Math.sqrt(Math.pow(b2.v.y, 2) + Math.pow(b1.v.x, 2));
-        //double v2 = Math.sqrt(Math.pow(b1.v.y, 2) + Math.pow(b2.v.x, 2));
-
-        Ecran.afficher("alpha : ", alpha, "\n");
-        Ecran.afficher("a : ", a1, "  ", a2, "\n");
-        Ecran.afficher("th : ", th1, "  ", th2, "\n");
-        Ecran.afficher("new v1, v2 : ", newV1, "  ", newV2, "\n");
 
         if (alpha < - Math.PI / 2)
             th1 += Math.PI;
@@ -272,27 +263,17 @@ public class Billard
         b2.v.x = newV2 * Math.cos(th2 + alpha);
         b2.v.y = newV2 * Math.sin(th2 + alpha);
 
-
-
-        /*double vgx = (b1.m * b1.v.x + b2.m * b2.v.x) / (b1.m + b2.m);
-        double vgy = (b1.m * b1.v.y + b2.m * b2.v.y) / (b1.m + b2.m);i
-
-       Ecran.afficher("centre gravite v : ", 2 * vgx - b2.v.x, "\n");
-        b1.v.x = (2 * vgx - module(b1.v)) * ;
-        b1.v.y = 2 * vgy - b1.v.y;
-        b2.v.x = 2 * vgx - b2.v.x;
-        b2.v.y = 2 * vgy - b2.v.y;*/
-
-        /*double mu = b1.m / b2.m;
-        double cos = (b1.x - b2.x) / (b1.r + b2.r);
-        double sin = (b1.y - b2.y) / (b1.r + b2.r);
-        EcranGraphique.wait(1000);
-        b2.v.x = b1.v.module * (mu - 1 + 2 * Math.pow(cos, 2)) / (mu + 1);
-        b2.v.y = b1.v.module * (2 * sin * cos) / (mu + 1);
-        b1.v.x = b1.v.module * (2 * mu * Math.pow(sin, 2)) / (mu + 1);
-        b1.v.y = b1.v.module * (-2 * mu * sin * cos) / (mu + 1);*/
-        Ecran.afficher("apres -> v1.x : ", b1.v.x, ", v2.x : ", b2.v.x, "\n");
-        Ecran.afficher("apres -> v1.y : ", b1.v.y, ", v2.y : ", b2.v.y, "\n");
+        Ecran.afficher ("alpha : ", alpha, "\n");
+        Ecran.afficher ("a1 : ", a1, "\n");
+        Ecran.afficher ("a2 : ", a2, "\n");
+        Ecran.afficher ("th1 : ", th1, "\n");
+        Ecran.afficher ("th2 : ", th2, "\n");
+        Ecran.afficher ("newV1 : ", newV1, "\n");
+        Ecran.afficher ("newV2 : ", newV2, "\n");
+        Ecran.afficher ("b1.v.x : ", b1.v.x, "\n");
+        Ecran.afficher ("b1.v.y : ", b1.v.y, "\n");
+        Ecran.afficher ("b2.v.x : ", b2.v.x, "\n");
+        Ecran.afficher ("b1.v.Y : ", b2.v.y, "\n");
     }
 
 // ---------------------------------------------------------------------- Main ----------------------------------------
@@ -332,8 +313,8 @@ public class Billard
 
             if (i == n - 1)
             {
-                balls[i].v.x = 0.05;
-                balls[i].v.y = 0;
+                balls[i].v.x = 0;
+                balls[i].v.y = 0.07;;
             }
 		}
 
