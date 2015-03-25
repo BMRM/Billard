@@ -66,8 +66,8 @@ public class Billard
 		double decal = 0;
 		int b = 0;
 		int n = (k * (k+1)/2) + 1;
-		balls[n - 1].p.x = 2 * Box.length/3;
-		balls[n - 1].p.y = Box.width/3;
+		balls[n - 1].p.x = 5 * Box.length/6;
+		balls[n - 1].p.y = Box.width/2;
 		for (int i = 1; i <= k; i++)
 		{
 
@@ -248,7 +248,6 @@ public class Billard
         double alpha = Math.atan((b1.p.y - b2.p.y) / (b1.p.x - b2.p.x)) - Math.PI / 2;
         double a1 = (b1.v.x == 0 && b1.v.y == 0) ? Math.PI / 2 + alpha : Math.atan(b1.v.y / b1.v.x) + alpha;
         double a2 = (b2.v.x == 0 && b2.v.y == 0) ? Math.PI / 2 + alpha : Math.atan(b2.v.y / b2.v.x) + alpha;
-        Ecran.afficher(b1.v.y / b1.v.x, "  ", b2.v.y / b2.v.x, "\n");
 
         double th1 = Math.atan((m1 - m2) / (m1 + m2) * Math.tan(a1) + ((2 * m2) / (m1 + m2)) * (v2 / v1) * (Math.sin(a2) / Math.cos(a1)));
         double th2 = Math.atan((m2 - m1) / (m1 + m2) * Math.tan(a2) + ((2 * m1) / (m1 + m2)) * (v1 / v2) * (Math.sin(a1) / Math.cos(a2)));
@@ -256,24 +255,25 @@ public class Billard
         double newV1 = Math.sqrt(Math.pow((m1 - m2) / (m1 + m2) * (v1 * Math.sin(a1)) + (2 * m2) / (m1 + m2) * (v2 * Math.sin(a2)), 2) + Math.pow(v1 * Math.cos(a1), 2));
         double newV2 = Math.sqrt(Math.pow((m2 - m1) / (m1 + m2) * (v2 * Math.sin(a2)) + (2 * m1) / (m1 + m2) * (v1 * Math.sin(a1)), 2) + Math.pow(v2 * Math.cos(a2), 2));
 
-        if (alpha < - Math.PI / 2)
-            th1 += Math.PI;
+        //if (alpha < - Math.PI / 2)
+          //  th1 += Math.PI;
         b1.v.x = newV1 * Math.cos(th1 + alpha);
         b1.v.y = newV1 * Math.sin(th1 + alpha);
         b2.v.x = newV2 * Math.cos(th2 + alpha);
         b2.v.y = newV2 * Math.sin(th2 + alpha);
 
-        Ecran.afficher ("alpha : ", alpha, "\n");
-        Ecran.afficher ("a1 : ", a1, "\n");
-        Ecran.afficher ("a2 : ", a2, "\n");
-        Ecran.afficher ("th1 : ", th1, "\n");
-        Ecran.afficher ("th2 : ", th2, "\n");
-        Ecran.afficher ("newV1 : ", newV1, "\n");
-        Ecran.afficher ("newV2 : ", newV2, "\n");
-        Ecran.afficher ("b1.v.x : ", b1.v.x, "\n");
-        Ecran.afficher ("b1.v.y : ", b1.v.y, "\n");
-        Ecran.afficher ("b2.v.x : ", b2.v.x, "\n");
-        Ecran.afficher ("b1.v.Y : ", b2.v.y, "\n");
+        Ecran.afficher("alpha : ", alpha * 180 / Math.PI, "\n");
+        Ecran.afficher("a1 : ", a1 * 180 / Math.PI, "\n");
+        Ecran.afficher("a2 : ", a2 * 180 / Math.PI, "\n");
+        Ecran.afficher("th1 : ", th1 * 180 / Math.PI, "\n");
+        Ecran.afficher("th2 : ", th2 * 180 / Math.PI, "\n");
+        Ecran.afficher("newV1 : ", newV1, "\n");
+        Ecran.afficher("newV2 : ", newV2, "\n");
+        Ecran.afficher("angle vecteur vitesse repere carthesien : ", (th1 + alpha)* 180 / Math.PI, (th2 + alpha) * 180 / Math.PI);
+        Ecran.afficher("b1.v.x : ", b1.v.x, "\n");
+        Ecran.afficher("b1.v.y : ", b1.v.y, "\n");
+        Ecran.afficher("b2.v.x : ", b2.v.x, "\n");
+        Ecran.afficher("b1.v.Y : ", b2.v.y, "\n");
     }
 
 // ---------------------------------------------------------------------- Main ----------------------------------------
@@ -313,8 +313,8 @@ public class Billard
 
             if (i == n - 1)
             {
-                balls[i].v.x = 0;
-                balls[i].v.y = 0.07;;
+                balls[i].v.x = -0.2;
+                balls[i].v.y = 0;;
             }
 		}
 
