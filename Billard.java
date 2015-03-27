@@ -1,3 +1,4 @@
+import java.math.BigDecimal;
 
 public class Billard
 {
@@ -5,34 +6,37 @@ public class Billard
 
 	static int width = 254;
 	static int length = 508;
-	static int scale = 200;
-	static double dt = 0.1;
+	static BigDecimal scale = new BigDecimal(200).setScale(Box.p);
 
 // ---- structure -----
 
 	static class Box
 	{
-		static double width = 1.27;
-		static double length = 2.54;
+        static int          p = 5;     // precision
+	    static BigDecimal   width = new BigDecimal(1.27).setScale(Box.p);
+	    static BigDecimal   length = new BigDecimal(2.54).setScale(Box.p);
+	    static BigDecimal   dt = new BigDecimal(0.1).setScale(Box.p);
 	}
 
 	static class Vector
 	{
-		double x;
-        double y;
+	    BigDecimal x;
+        BigDecimal y;
 	}
 
 	static class Color
 	{
-		int r, v, b;
+	    int r, v, b;
 	}
 
-	static class Ball
-	{
-		double r;
-		Vector p = new Vector();
-		Vector v = new Vector();
-		double m;
+    static class Ball
+    {
+        int         id;
+	    Vector      p = new Vector();
+	    Vector      v = new Vector();
+	    BigDecimal  r;
+	    BigDecimal  m;
+        boolean     choc = false;
 	}
 
 	static class RenderBall
@@ -66,7 +70,7 @@ public class Billard
 		double decal = 0;
 		int b = 0;
 		int n = (k * (k+1)/2) + 1;
-		balls[n - 1].p.x = 5 * Box.length/6;
+		balls[n - 1].p.x = Box.length/3;
 		balls[n - 1].p.y = Box.width/2;
 		for (int i = 1; i <= k; i++)
 		{
@@ -117,79 +121,66 @@ public class Billard
 		EcranGraphique.flush();
 	}
 
-    static double update(Ball[] balls, int n, double dt)
+    static BigDecimal update(Ball[] balls, int n, BigDecimal dt)
     {
-        double t = dt;
-        double tmp;
-        int k = 0;
-        int l = 0;
+        BigDecimal  t = BigDecimal(dt);
+        BigDecimal  tmp;
+        tmp.setScale(Box.p);
 
         for (int i = 0; i < n; i++)
         {
-            for (int j = i + 1; j < n; j++)
+            if (balls[i].choc == false)
             {
-                tmp = dtChocBalls(balls[i], balls[j], dt);
-                if (tmp != -1 && tmp < t)
+                for (int j = i + 1; j < n; j++)
                 {
-                    if (t == 0)
-                        chocBalls(balls[i], balls[j]);
-                    else
+                    //Ecran.afficher(module(diff(balls[i].p, balls[j].p)), "\n");
+                    tmp = dtChocBalls(balls[i], balls[j], dt);
+                    if (tmp != -1 && tmp < t)
                     {
                         t = tmp;
-                        k = i;
-                        l = j;
+                        if (t == 0)
+                            chocBalls(balls[i], balls[j]);
                     }
                 }
-            }
-            tmp = dtChocBox(balls[i], dt);
-            if (tmp != -1 && tmp < t)
-            {
-                if (t == 0)
-                    chocBox(balls[i]);
-                else
+                tmp = dtChocBox(balls[i], dt);
+                if (tmp != -1 && tmp < t)
                 {
-                    k = i;
                     t = tmp;
-                    l = 0;
+                    if (t == 0)
+                        chocBox(balls[i]);
                 }
             }
-        }
-        if (t < dt)
-        {
-            if (t == 0)
-            {
-                evolve(balls, n, 0.00001);
-                return 0.00001;
-            }
-            evolve(balls, n, t);
-            if (l > 0)
-                chocBalls(balls[k], balls[l]);
             else
-                chocBox(balls[k]);
-            return t;
+                Ecran.afficher("choc deja gere\n");
         }
-        else
-            evolve(balls, n, dt);
-        return dt;
+        t = Math.min(t, dt);
+        if (t > 0)
+            evolve(balls, n, t);
+        return t;
     }
 
-    static void evolve(Ball b, double dt)
+    static void evolve(Ball b, BigDecimal dt)
     {
         b.p.x += dt * b.v.x;
         b.p.y += dt * b.v.y;
+        //if (b.id == 15)
+        //    Ecran.afficher(dt, "\n", dt * b.v.x, "\n", b.p.x, "\n");
+
+        //Ecran.afficher(b.id, dt * b.v.x, "\n");
+        b.choc = false;
         //ball.v.module *= 0.99;
     }
 
-    static void evolve(Ball [] balls, int n, double dt)
+    static void evolve(Ball [] balls, int n, BigDecimal dt)
     {
         for (int i = 0; i < n; i++)
             evolve(balls[i], dt);
     }
 
-    static double dtChocBox(Ball b, double dt)
+    static BigDecimal dtChocBox(Ball b, BigDecimal dt)
     {
-        double t = dt;
-        double tmp;
+        BigDecimal t = BigDecimal(dt);
+        BigDecimal tmp = new BigDecimal();
 
         tmp = (b.r - b.p.x) / b.v.x;
         if (tmp >= 0 && tmp < t)
@@ -216,15 +207,20 @@ public class Billard
         double a = Math.pow(b1.v.x - b2.v.x, 2) + Math.pow(b1.v.y - b2.v.y, 2);
         double c = Math.pow(b1.p.x - b2.p.x, 2) + Math.pow(b1.p.y - b2.p.y, 2) - Math.pow(b1.r + b2.r, 2);
         double delta = Math.pow(b, 2) - 4 * a * c;
-
+        //if (module(diff(b1.p, b2.p)) == 0)
+          //      Ecran.afficher("\n", t, "\n", a, "\n", b, "\n", c, "\n", delta, "\n", module(diff(b1.p, b2.p)), "\n");
         if (delta > 0)
             t = Math.min((-b + Math.sqrt(delta)) / (2 * a), (-b - Math.sqrt(delta)) / (2 * a));
         else if (delta == 0)
             t = (-b) / (2 * a);
         else
             return -1;
+        //if (a * Math.pow(t, 2) + b * t + c == 0)
+            //Ecran.afficher(t, "\n");
         if (t >= 0 && t < dt)
+        {
             return t;
+        }
         return -1;
     }
 
@@ -239,6 +235,7 @@ public class Billard
             b.v.y *= -1;
         else if (b.p.y + b.r == Box.width)
             b.v.y *= -1;
+        b.choc = true;
     }
 
     static void chocBalls(Ball b1, Ball b2)
@@ -271,6 +268,8 @@ public class Billard
         b2.v.x = newV2 * Math.cos(th2 + alpha);
         b2.v.y = newV2 * Math.sin(th2 + alpha);
 
+        b1.choc = true;
+
         /*Ecran.afficher("alpha : ", alpha * 180 / Math.PI, "\n");
         Ecran.afficher("a1 : ", a1 * 180 / Math.PI, "\n");
         Ecran.afficher("a2 : ", a2 * 180 / Math.PI, "\n");
@@ -292,7 +291,7 @@ public class Billard
 	{
 
 		//taille de la base du triangle pour un positionnement classique
-		int k = 1;
+		int k = 5;
 
 		//nombre de boule totale pour positionnement classique
 		int n = (k * (k+1)/2) + 1;
@@ -308,21 +307,22 @@ public class Billard
 		{
 			//Def du tableau de position
 			balls[i] = new Ball();
-			balls[i].r = 0.03;
-			balls[i].v.x = 0;//(Math.random() - 0.5) * 0.001;
-			balls[i].v.y = 0;//(Math.random() - 0.5) * 0.001;
-			balls[i].m = 1;
+			balls[i].v.x = new BigDecimal(0).setScale(Box.p);//(Math.random() - 0.5) * 0.001;
+			balls[i].v.y = new BigDecimal(0).setScale(Box.p);//(Math.random() - 0.5) * 0.001;
+			balls[i].r = new BigDecimal(0.03).setScale(Box.p);
+			balls[i].m = new BigDecimal(0.1).setScale(Box.p);
+            balls[i].id = i;
 
 			//Def du tableau de rendu
 			renderballs[i] = new RenderBall();
-			renderballs[i].r = (int)(balls[i].r * scale);
+			renderballs[i].r = BigDecimal(balls[i].r * BigDecimal(scale)).intValue();
 			renderballs[i].couleur.r = ((int)(Math.random() * 250));
 			renderballs[i].couleur.v = ((int)(Math.random() * 250));
 			renderballs[i].couleur.b = ((int)(Math.random() * 250));
 
             if (i == n - 1)
             {
-                balls[i].v.x = -0.1;
+                balls[i].v.x = 0.1;
                 balls[i].v.y = 0;;
             }
 		}
@@ -341,10 +341,10 @@ public class Billard
             while (t < dt)
             {
 			    t += update(balls, n, dt - t);
-                if (t < dt)
-                Ecran.afficher("t = ", t, "\n");
+                //if (t < dt)
+                //Ecran.afficher("t = ", t, "\n");
             }
-            Ecran.afficher("dt ecoule\n");
+            //Ecran.afficher("dt ecoule\n");
 			render(renderballs, balls,n);
 			EcranGraphique.wait(10);
 		}
