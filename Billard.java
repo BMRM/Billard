@@ -173,7 +173,7 @@ public class Billard
                     if (tmp.compareTo(BigDecimal.ONE.negate()) != 0 && tmp.compareTo(t) < 0)
                     {
                         t = tmp;
-                        //Ecran.afficher(t, "   ", i, " vs ", j, "  ", module(diff(balls[i].p, balls[j].p)), "\n");
+                        Ecran.afficher(t, "   ", i, " vs ", j, "  ", module(diff(balls[i].p, balls[j].p)), "\n");
                         if (t.compareTo(BigDecimal.ZERO) == 0)
                             chocBalls(balls[i], balls[j]);
                     }
@@ -182,7 +182,7 @@ public class Billard
                 if (tmp.compareTo(BigDecimal.ONE.negate()) != 0 && tmp.compareTo(t) < 0)
                 {
                     t = tmp;
-                        //Ecran.afficher(t, "  ", i, "\n");
+                        Ecran.afficher(t, "  ", i, "   ", balls[i].p.x.add(balls[i].r).subtract(Box.length), "\n");
                     if (t.compareTo(BigDecimal.ZERO) == 0)
                         chocBox(balls[i]);
                 }
@@ -226,7 +226,8 @@ public class Billard
             tmp = b.r.subtract(b.p.x).divide(b.v.x, Box.p).setScale(Box.s, Box.r);
             if (tmp.compareTo(BigDecimal.ZERO) >= 0 && tmp.compareTo(t) < 0)
                 t = tmp;
-            tmp = Box.length.subtract(b.r).subtract(b.p.x).divide(b.v.x, Box.p).setScale(Box.s, Box.r);
+            tmp = Box.length.subtract(b.r).subtract(b.p.x).divide(b.v.x, Box.p);
+            //Ecran.afficher("   ", tmp, "  ", "\n");
             if (tmp.compareTo(BigDecimal.ZERO) >= 0 && tmp.compareTo(t) < 0)
                 t = tmp;
         }
@@ -332,7 +333,7 @@ public class Billard
 
         // alpha = atan((b1.p.y - b2.p.y) / (b1.p.x - b2.p.x)) - PI / 2
         BigDecimal alpha = (b1.p.x.compareTo(b2.p.x) == 0) ? BigDecimal.ZERO :
-            atan(b1.p.y.subtract(b2.p.y).divide(b1.p.x.subtract(b2.p.x), Box.p)).add(halfPI());
+            atan(b1.p.y.subtract(b2.p.y).divide(b1.p.x.subtract(b2.p.x), Box.p)).subtract(halfPI());
         BigDecimal a1 = (b1.v.x.compareTo(BigDecimal.ZERO) == 0 && b1.v.y.compareTo(BigDecimal.ZERO) == 0) ?
             halfPI().add(alpha) :
             atan(b1.v.y.divide(b1.v.x, Box.p)).add(alpha);
@@ -355,7 +356,7 @@ public class Billard
 
         b1.choc = true;
 
-        /*Ecran.afficher("\nalpha : ", alpha, "\n");
+        Ecran.afficher("\nalpha : ", alpha, "\n");
         Ecran.afficher("a1 : ", a1, "\n");
         Ecran.afficher("a2 : ", a2, "\n");
         Ecran.afficher("th1 : ", th1, "\n");
@@ -366,7 +367,7 @@ public class Billard
         Ecran.afficher("b1.v.x : ", b1.v.x, "\n");
         Ecran.afficher("b1.v.y : ", b1.v.y, "\n");
         Ecran.afficher("b2.v.x : ", b2.v.x, "\n");
-        Ecran.afficher("b2.v.y : ", b2.v.y, "\n");*/
+        Ecran.afficher("b2.v.y : ", b2.v.y, "\n");
     }
 
 // ---------------------------------------------------------------------- Main ----------------------------------------
@@ -376,7 +377,7 @@ public class Billard
 	{
 
 		//taille de la base du triangle pour un positionnement classique
-		int k = 5;
+		int k = 1;
 
 		//nombre de boule totale pour positionnement classique
 		int n = (k * (k+1)/2) + 1;
@@ -407,7 +408,7 @@ public class Billard
 
             if (i == n - 1)
             {
-                balls[i].v.x = new BigDecimal(0.04, Box.p);
+                balls[i].v.x = new BigDecimal(0.1, Box.p);
                 balls[i].v.y = new BigDecimal(0, Box.p);
             }
 		}
