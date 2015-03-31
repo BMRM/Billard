@@ -79,13 +79,6 @@ public class Billard
 		for (int i = 1; i <= k; i++)
 		{
 
-			for (int j = 0; j <= i - 1; j++)
-			{
-				balls[b].p.x = multiply((double)2/3, Box.length).add(decal);
-				balls[b].p.y = multiply((double)1/2, Box.width).add(multiply(2 * j, balls[b].r)).subtract(multiply((double)1/2, decal)).add(new BigDecimal(0.1 * j, Box.p));
-                b++;
-			}
-
 			decal = decal.add(multiply(2, balls[i].r)).add(new BigDecimal(0.01, Box.p));
 		}
 	}
@@ -332,9 +325,12 @@ public class Billard
         BigDecimal m2 = b2.m;
 
         // alpha = atan((b1.p.y - b2.p.y) / (b1.p.x - b2.p.x)) - PI / 2
-        BigDecimal alpha = (b1.p.x.compareTo(b2.p.x) == 0) ? BigDecimal.ZERO :
-            atan(b1.p.y.subtract(b2.p.y).divide(b1.p.x.subtract(b2.p.x), Box.p)).subtract(halfPI());
-        BigDecimal a1 = (b1.v.x.compareTo(BigDecimal.ZERO) == 0 && b1.v.y.compareTo(BigDecimal.ZERO) == 0) ?
+        BigDecimal alpha = (b1.p.x.compareTo(b2.p.x) == 0) ?
+            ((b1.p.y < b2.p.y) ? BigDecimal.ZERO : multiply(2, halfPI()).negate()) :
+            ((b1.p.y.compareTo(b2.p.y) == 0) ?
+                ((b1.p.x.compareTo(b2.p.x) < 0) ? halfPI().negate() : halfPi()) :
+                atan(b1.p.y.subtract(b2.p.y).divide(b1.p.x.subtract(b2.p.x), Box.p)).subtract(halfPI());
+        BigDecimal a1 = (b1.v.x.compareTo(BigDecimal.ZERO) == 0 && b1.v.y.compareTo(BigDecimal.ZERO) == 0))
             halfPI().add(alpha) :
             atan(b1.v.y.divide(b1.v.x, Box.p)).add(alpha);
         BigDecimal a2 = (b2.v.x.compareTo(BigDecimal.ZERO) == 0) ?
