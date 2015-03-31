@@ -74,10 +74,16 @@ public class Billard
 		BigDecimal decal = BigDecimal.ZERO;
 		int b = 0;
 		int n = (k * (k+1)/2) + 1;
-		balls[n - 1].p.x = multiply((double)1/3, Box.length);
-		balls[n - 1].p.y = multiply((double)1/2, Box.width);
+		balls[n - 1].p.x = multiply((double)1/2, Box.length);
+		balls[n - 1].p.y = multiply((double)1/2, Box.width);//.add(new BigDecimal(0.03, Box.p));
 		for (int i = 1; i <= k; i++)
 		{
+			for (int j = 0; j <= i - 1; j++)
+			{
+				balls[b].p.x = multiply((double)2/3, Box.length).add(decal);
+				balls[b].p.y = multiply((double)1/2, Box.width).add(multiply(2 * j, balls[b].r)).subtract(multiply((double)1/2, decal)).add(new BigDecimal(0.1 * j, Box.p));
+                b++;
+			}
 
 			decal = decal.add(multiply(2, balls[i].r)).add(new BigDecimal(0.01, Box.p));
 		}
@@ -110,6 +116,14 @@ public class Billard
     static BigDecimal atan(BigDecimal x)
     {
         return new BigDecimal(Math.atan(x.doubleValue()), Box.p);
+    }
+
+    static BigDecimal atanDiv(BigDecimal a, BigDecimal b)
+    {
+        if (b.compareTo(BigDecimal.ZERO) == 0)
+            return multiply((double)(a.signum()), halfPI());
+        else
+            return atan(a.divide(b, Box.p));
     }
 
     static BigDecimal tan(BigDecimal x)
@@ -175,7 +189,7 @@ public class Billard
                 if (tmp.compareTo(BigDecimal.ONE.negate()) != 0 && tmp.compareTo(t) < 0)
                 {
                     t = tmp;
-                        Ecran.afficher(t, "  ", i, "   ", balls[i].p.x.add(balls[i].r).subtract(Box.length), "\n");
+                        Ecran.afficher(t, "  ", i, "\n");
                     if (t.compareTo(BigDecimal.ZERO) == 0)
                         chocBox(balls[i]);
                 }
@@ -325,30 +339,36 @@ public class Billard
         BigDecimal m2 = b2.m;
 
         // alpha = atan((b1.p.y - b2.p.y) / (b1.p.x - b2.p.x)) - PI / 2
-        BigDecimal alpha = (b1.p.x.compareTo(b2.p.x) == 0) ?
-            ((b1.p.y < b2.p.y) ? BigDecimal.ZERO : multiply(2, halfPI()).negate()) :
-            ((b1.p.y.compareTo(b2.p.y) == 0) ?
-                ((b1.p.x.compareTo(b2.p.x) < 0) ? halfPI().negate() : halfPi()) :
-                atan(b1.p.y.subtract(b2.p.y).divide(b1.p.x.subtract(b2.p.x), Box.p)).subtract(halfPI());
-        BigDecimal a1 = (b1.v.x.compareTo(BigDecimal.ZERO) == 0 && b1.v.y.compareTo(BigDecimal.ZERO) == 0))
-            halfPI().add(alpha) :
-            atan(b1.v.y.divide(b1.v.x, Box.p)).add(alpha);
-        BigDecimal a2 = (b2.v.x.compareTo(BigDecimal.ZERO) == 0) ?
-            halfPI().add(alpha) :
-            atan(b2.v.y.divide(b2.v.x, Box.p)).add(alpha);
+        BigDecimal alpha = atanDiv(b1.p.y.subtract(b2.p.y), b1.p.x.subtract(b2.p.x));
+        alpha = (alpha.compareTo(BigDecimal.ZERO) == 0) ? multiply((double)(b1.v.x.subtract(b2.v.x).signum()), halfPI()) :
+            alpha.add(multiply((double)(alpha.signum()), halfPI().negate())).negate();
+        //BigDecimal alpha = atanDiv(b1.p.y.subtract(b2.p.y), b1.p.x.subtract(b2.p.x)).subtract(halfPI());
+        //
+        /*    (b1.p.x.compareTo(b2.p.x) == 0) ? multiply((double)(b1.p.y.subtract(b2.p.y).signum()), half
+            (b1.p.y.compareTo(b2.p.y) < 0) ? BigDecimal.ZERO : multiply(2, halfPI()) :
+            (b1.p.y.compareTo(b2.p.y) == 0) ?
+                ((b1.p.x.compareTo(b2.p.x) < 0) ? halfPI().negate() : halfPI()).negate() :
+                atan(b1.p.y.subtract(b2.p.y).divide(b1.p.x.subtract(b2.p.x), Box.p)).subtract(halfPI());*/
+        BigDecimal a1 = atanDiv(b1.v.y, b1.v.x).add(alpha);
+           // = (b1.v.x.compareTo(BigDecimal.ZERO) == 0) ? multiply((double)(b1.v.y.signum()), halfPI()).add(alpha) :
+           // atan(b1.v.y.divide(b1.v.x, Box.p)).add(alpha);
+        BigDecimal a2 = atanDiv(b2.v.y, b2.v.x).add(alpha);
+            //(b2.v.x.compareTo(BigDecimal.ZERO) == 0) ? multiply((double)(b2.v.y.signum()), halfPI()).add(alpha) :
+            //atan(b2.v.y.divide(b2.v.x, Box.p)).add(alpha);
 
         // atan(((m1 - m2) / (m1 + m2)) * ()
-        BigDecimal th1 = atan(m1.subtract(m2).divide(m1.add(m2), Box.p).multiply(tan(a1)).add(multiply(2, m2).divide(m1.add(m2), Box.p).multiply(v2.divide(v1, Box.p)).multiply(sin(a2).divide(cos(a1), Box.p))));
-        BigDecimal th2 = (v2.compareTo(BigDecimal.ZERO) == 0) ? halfPI().negate() :
+        BigDecimal th1 = (v1.multiply(cos(a1)).compareTo(BigDecimal.ZERO) == 0) ? multiply((double)(v2.multiply(sin(a2)).signum()), halfPI()) :
+            atan(m1.subtract(m2).divide(m1.add(m2), Box.p).multiply(tan(a1)).add(multiply(2, m2).divide(m1.add(m2), Box.p).multiply(v2.divide(v1, Box.p)).multiply(sin(a2).divide(cos(a1), Box.p))));
+        BigDecimal th2 = (v2.multiply(cos(a2)).compareTo(BigDecimal.ZERO) == 0) ? multiply((double)(v1.multiply(sin(a1)).signum()), halfPI()) :
             atan(m2.subtract(m1).divide(m1.add(m2), Box.p).multiply(tan(a2)).add(multiply(2, m1).divide(m1.add(m2), Box.p).multiply(v1.divide(v2, Box.p)).multiply(sin(a1).divide(cos(a2), Box.p))));
 
         BigDecimal newV1 = sqrt(m1.subtract(m2).divide(m1.add(m2), Box.p).multiply(v1).multiply(sin(a1)).add(multiply(2, m2).divide(m1.add(m2), Box.p).multiply(v2).multiply(sin(a2)).pow(2, Box.p).add(v1.multiply(cos(a1)).pow(2, Box.p)))).setScale(Box.s, Box.r);
         BigDecimal newV2 = sqrt(m2.subtract(m1).divide(m1.add(m2), Box.p).multiply(v2).multiply(sin(a2)).add(multiply(2, m1).divide(m1.add(m2), Box.p).multiply(v1).multiply(sin(a1)).pow(2, Box.p).add(v2.multiply(cos(a2)).pow(2, Box.p)))).setScale(Box.s, Box.r);
 
-        b1.v.x = newV1.multiply(cos(th1.add(alpha)));
-        b1.v.y = newV1.multiply(sin(th1.add(alpha)));
-        b2.v.x = newV2.multiply(cos(th2.add(alpha)));
-        b2.v.y = newV2.multiply(sin(th2.add(alpha)));
+        b1.v.x = newV1.multiply(cos(th1.subtract(alpha)));
+        b1.v.y = newV1.multiply(sin(th1.subtract(alpha)));
+        b2.v.x = newV2.multiply(cos(th2.subtract(alpha)));
+        b2.v.y = newV2.multiply(sin(th2.subtract(alpha)));
 
         b1.choc = true;
 
@@ -359,6 +379,8 @@ public class Billard
         Ecran.afficher("th2 : ", th2, "\n");
         Ecran.afficher("newV1 : ", newV1, "\n");
         Ecran.afficher("newV2 : ", newV2, "\n");
+        Ecran.afficher("newTh1 : ", th1.add(alpha), "\n");
+        Ecran.afficher("newTh2 : ", th2.add(alpha), "\n");
         //Ecran.afficher("angle vecteur vitesse repere carthesien : ", (th1 + alpha)* 180 / Math.PI, "  ", (th2 + alpha) * 180 / Math.PI, "\n");
         Ecran.afficher("b1.v.x : ", b1.v.x, "\n");
         Ecran.afficher("b1.v.y : ", b1.v.y, "\n");
@@ -371,9 +393,7 @@ public class Billard
 
 	public static void main(String[] args)
 	{
-
-		//taille de la base du triangle pour un positionnement classique
-		int k = 1;
+		int k = 5;
 
 		//nombre de boule totale pour positionnement classique
 		int n = (k * (k+1)/2) + 1;
