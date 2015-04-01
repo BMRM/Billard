@@ -69,25 +69,6 @@ public class Billard
 		}
 	}
 
-	static void calcPosTriangle(Ball [] balls , int k)
-	{
-		BigDecimal decal = BigDecimal.ZERO;
-		int b = 0;
-		int n = (k * (k+1)/2) + 1;
-		balls[n - 1].p.x = multiply((double)1/2, Box.length);
-		balls[n - 1].p.y = multiply((double)1/2, Box.width);//.add(new BigDecimal(0.03, Box.p));
-		for (int i = 1; i <= k; i++)
-		{
-			for (int j = 0; j <= i - 1; j++)
-			{
-				balls[b].p.x = multiply((double)2/3, Box.length).add(decal);
-				balls[b].p.y = multiply((double)1/2, Box.width).add(multiply(2 * j, balls[b].r)).subtract(multiply((double)1/2, decal)).add(new BigDecimal(0.1 * j, Box.p));
-                b++;
-			}
-
-			decal = decal.add(multiply(2, balls[i].r)).add(new BigDecimal(0.01, Box.p));
-		}
-	}
 
     static BigDecimal multiply(double a, BigDecimal b)
     {
@@ -98,7 +79,6 @@ public class Billard
     {
         return new BigDecimal(Math.sqrt(n.doubleValue()), Box.p);
     }
-
 
     static BigDecimal module(Vector v)
     {
@@ -349,10 +329,11 @@ public class Billard
             (b1.p.y.compareTo(b2.p.y) == 0) ?
                 ((b1.p.x.compareTo(b2.p.x) < 0) ? halfPI().negate() : halfPI()).negate() :
                 atan(b1.p.y.subtract(b2.p.y).divide(b1.p.x.subtract(b2.p.x), Box.p)).subtract(halfPI());*/
-        BigDecimal a1 = atanDiv(b1.v.y, b1.v.x).add(alpha);
+        BigDecimal a1 = atanDiv(b1.v.y, b1.v.x).add(alpha.abs());
            // = (b1.v.x.compareTo(BigDecimal.ZERO) == 0) ? multiply((double)(b1.v.y.signum()), halfPI()).add(alpha) :
            // atan(b1.v.y.divide(b1.v.x, Box.p)).add(alpha);
-        BigDecimal a2 = atanDiv(b2.v.y, b2.v.x).add(alpha);
+        BigDecimal a2 = (b2.v.y.compareTo(BigDecimal.ZERO) == 0 && b2.v.x.compareTo(BigDecimal.ZERO) == 0) ? BigDecimal.ZERO :
+            atanDiv(b2.v.y, b2.v.x).add(alpha);
             //(b2.v.x.compareTo(BigDecimal.ZERO) == 0) ? multiply((double)(b2.v.y.signum()), halfPI()).add(alpha) :
             //atan(b2.v.y.divide(b2.v.x, Box.p)).add(alpha);
 
@@ -365,10 +346,10 @@ public class Billard
         BigDecimal newV1 = sqrt(m1.subtract(m2).divide(m1.add(m2), Box.p).multiply(v1).multiply(sin(a1)).add(multiply(2, m2).divide(m1.add(m2), Box.p).multiply(v2).multiply(sin(a2)).pow(2, Box.p).add(v1.multiply(cos(a1)).pow(2, Box.p)))).setScale(Box.s, Box.r);
         BigDecimal newV2 = sqrt(m2.subtract(m1).divide(m1.add(m2), Box.p).multiply(v2).multiply(sin(a2)).add(multiply(2, m1).divide(m1.add(m2), Box.p).multiply(v1).multiply(sin(a1)).pow(2, Box.p).add(v2.multiply(cos(a2)).pow(2, Box.p)))).setScale(Box.s, Box.r);
 
-        b1.v.x = newV1.multiply(cos(th1.subtract(alpha)));
-        b1.v.y = newV1.multiply(sin(th1.subtract(alpha)));
-        b2.v.x = newV2.multiply(cos(th2.subtract(alpha)));
-        b2.v.y = newV2.multiply(sin(th2.subtract(alpha)));
+        b1.v.x = newV1.multiply(cos(th1.subtract(alpha))).setScale(Box.s, Box.r);
+        b1.v.y = newV1.multiply(sin(th1.subtract(alpha))).setScale(Box.s, Box.r);
+        b2.v.x = newV2.multiply(cos(th2.subtract(alpha))).setScale(Box.s, Box.r);
+        b2.v.y = newV2.multiply(sin(th2.subtract(alpha))).setScale(Box.s, Box.r);
 
         b1.choc = true;
 
@@ -388,12 +369,32 @@ public class Billard
         Ecran.afficher("b2.v.y : ", b2.v.y, "\n");
     }
 
+	static void calcPosTriangle(Ball [] balls , int k)
+	{
+		BigDecimal decal = BigDecimal.ZERO;
+		int b = 0;
+		int n = (k * (k+1)/2) + 1;
+		balls[n - 1].p.x = multiply((double)3/4, Box.length);
+		balls[n - 1].p.y = multiply((double)1/2, Box.width).add(new BigDecimal(-0.03, Box.p));
+		for (int i = 1; i <= k; i++)
+		{
+			for (int j = 0; j <= i - 1; j++)
+			{
+				balls[b].p.x = multiply((double)2/3, Box.length).add(decal);
+				balls[b].p.y = multiply((double)1/2, Box.width).add(multiply(2 * j, balls[b].r)).subtract(multiply((double)1/2, decal)).add(new BigDecimal(0.1 * j, Box.p));
+                b++;
+			}
+
+			decal = decal.add(multiply(2, balls[i].r)).add(new BigDecimal(0.01, Box.p));
+		}
+	}
+
 // ---------------------------------------------------------------------- Main ----------------------------------------
 // --- -----------------------------------------------------------------------------------------------------------------
 
 	public static void main(String[] args)
 	{
-		int k = 5;
+		int k = 1;
 
 		//nombre de boule totale pour positionnement classique
 		int n = (k * (k+1)/2) + 1;
@@ -424,7 +425,7 @@ public class Billard
 
             if (i == n - 1)
             {
-                balls[i].v.x = new BigDecimal(0.1, Box.p);
+                balls[i].v.x = new BigDecimal(-0.1, Box.p);
                 balls[i].v.y = new BigDecimal(0, Box.p);
             }
 		}
