@@ -1,7 +1,15 @@
+class Color 
+{
+	int r;
+	int v;
+	int b;
+}
+
 public class RenderBall
 {
 	int r;
-	int x, y;
+	int x;
+	int y;
 	Color c = new Color();
 	
 	static void make(RenderBall[] rB, int n)

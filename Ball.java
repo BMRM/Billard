@@ -6,12 +6,6 @@ public class Ball
 	Vector	v = new Vector();
 	double	m;
 	
-	static void whiteB(Ball [] balls, int n)
-	{
-		balls[n - 1].p.x = Box.length / 2;
-		balls[n - 1].p.y = Box.width / 2;
-	}
-	
 	static double dtChocBox(Ball b, double dt)
     {
         double t = dt;
@@ -85,6 +79,24 @@ public class Ball
 		b2.v.a = a2;
 		formeCart(b1);
 		formeCart(b2);
+	}
+	
+	static void make(Ball[] b, int n)
+	{
+		for(int i = 0; i < n ; i++)
+		{
+			b[i] = new Ball();
+			b[i].r = 0.03;
+			b[i].v.x = 0;
+			b[i].v.y = 0;
+			b[i].m = 1;		
+            if (i == n - 1)
+            {
+                b[i].v.x = 0.3;
+                b[i].v.y = 0;
+            }
+			formeTrigo(b[i].v);
+		}
 	}
 }
 

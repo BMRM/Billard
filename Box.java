@@ -9,6 +9,13 @@ public class Box
     static MathContext  p = new MathContext(5, RoundingMode.HALF_UP);
 
 	Ball[]	balls;
+	boolean run = false;
+	
+	static double	make(Box box, int nbBoules)
+	{
+		box.balls = new Ball[nbBoules];
+		make(box.balls, nbBoules);
+	}
 
 	static double	update(Ball[] balls, int n, double dt)
 	{
@@ -74,7 +81,7 @@ public class Box
 			evolve(balls[i], dt);
 	}
 	
-	static void calcPosLine(Ball [] balls, int n)
+	static void posLine(Ball [] balls, int n)
 	{
 		double k = length / ( n + 0.01 );
 		for (int i = 0; i < n; i++)
@@ -84,7 +91,7 @@ public class Box
 		}
 	}
 	
-	static void calcPosTriangle(Ball [] balls , int k)
+	static void posTriangle(Ball [] balls , int k)
 	{
 		double decal = 0;
 		int b = 0;
@@ -100,24 +107,6 @@ public class Box
 				b++;
 			}
 			decal += (2 * balls[i].r);
-		}
-	}
-	
-	static void make(Ball[] b, int n)
-	{
-		for(int i = 0; i < n ; i++)
-		{
-			b[i] = new Ball();
-			b[i].r = 0.03;
-			b[i].v.x = 0;
-			b[i].v.y = 0;
-			b[i].m = 1;		
-            if (i == n - 1)
-            {
-                b[i].v.x = 0.3;
-                b[i].v.y = 0;
-            }
-			formeTrigo(b[i].v);
 		}
 	}
 }
