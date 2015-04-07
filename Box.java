@@ -8,79 +8,83 @@ public class Box
 	static double		length = 2.54;
     static MathContext  p = new MathContext(5, RoundingMode.HALF_UP);
 
-	Ball[]	balls;
+    int     nbBalls;
+	Ball	balls[];
 	boolean run = false;
-	
-	static double	make(Box box, int nbBoules)
-	{
-		box.balls = new Ball[nbBoules];
-		make(box.balls, nbBoules);
-	}
 
-	static double	update(Ball[] balls, int n, double dt)
+	static void     make(Box box, int nbBalls)
+	{
+        box.nbBalls = nbBalls;
+		box.balls = new Ball[nbBalls];
+		Ball.make(box.balls, nbBalls);
+    }
+
+	static double	update(Box box, double dt)
 	{
 		BigDecimal	t = new BigDecimal(dt, p);
 		BigDecimal	tmp;
 		Stack		stack = new Stack();
-		
-		for (int i = 0; i < n; i++)
+
+        Ball bi, bj;
+		for (int i = 0; i < box.nbBalls; i++)
 		{
-			for (int j = i + 1; j < n; j++)
+            bi = box.balls[i];
+			for (int j = i + 1; j < box.nbBalls; j++)
 			{
-				tmp = new BigDecimal(dtChocBalls(balls[i], balls[j], t), p);
+                bj = box.balls[j];
+				tmp = new BigDecimal(Ball.dtChocBalls(bi, bj, t.doubleValue()), p);
 				if (tmp.compareTo(BigDecimal.ONE.negate()) != 0 && tmp.compareTo(t) <= 0)
 				{
 					if (tmp.compareTo(t) != 0)
-						clear(stackEvent);
-					push(stack, newEvent(1, balls[i], balls[j]));
+						Stack.clear(stack);
+					Stack.push(stack, 0, bi, bj);
 					t = tmp;
 				}
 			}
-			tmp = new BigDecimal(dtChocBox(balls[i], t), p);
+			tmp = new BigDecimal(Ball.dtChocBox(bi, t.doubleValue()), p);
 			if (tmp.compareTo(BigDecimal.ONE.negate()) != 0 && tmp.compareTo(t) <= 0)
 			{
 				if (tmp.compareTo(t) != 0)
-					clear(stackEvent);
-				push(stack, newEvent(1, balls[i], balls[j]));
+					Stack.clear(stack);
+				Stack.push(stack, 1, bi, null);
 				t = tmp;
 			}
 		}
-		evolve(balls, n, t);
+		evolve(box.balls, box.nbBalls, t.doubleValue());
 		pollEvent(stack);
 		return t.doubleValue();
 	}
 
 	static void pollEvent(Stack stack)
 	{
-		while (!isEmpty(stack))
+		while (!Stack.isEmpty(stack))
 		{
-			Event e = stack.first;
-			switch (e.type)
+			switch (stack.first.event.type)
 			{
 				case 0 :
-					chocBalls(e.b1, e.b2);
+					Ball.chocBalls(stack.first.event.b1, stack.first.event.b2);
 					break;
 				case 1 :
-					chocBox(e.b1);
+					Ball.chocBox(stack.first.event.b1);
 					break;
 				default :
 					break;
 			}
 		}
 	}
-	
+
 	static void evolve(Ball b, double dt)
 	{
 		b.p.x = dt * b.v.x;
 		b.p.x = dt * b.v.y;
 	}
-	
-	static void evolve(Ball[] balls, n, dt)
+
+	static void evolve(Ball[] balls, int n, double dt)
 	{
 		for (int i = 0; i < n; i++)
 			evolve(balls[i], dt);
 	}
-	
+
 	static void posLine(Ball [] balls, int n)
 	{
 		double k = length / ( n + 0.01 );
@@ -90,7 +94,7 @@ public class Box
 			balls[i].p.y = width / 2;
 		}
 	}
-	
+
 	static void posTriangle(Ball [] balls , int k)
 	{
 		double decal = 0;

@@ -8,38 +8,38 @@ public class Menu
 		"Pause",
 		"Demarrer",
 		"Quitter"};
-		
+
 	Button	buttons[];
 	Rect	size;
-		
+
 	static void make(Menu menu, Rect sizeMenu)
 	{
 		menu.buttons = new Button[nbButtons];
 		menu.size = sizeMenu;
-		
+
 		for (int i = 0; i < nbButtons; i++)
 		{
-			Rect size = rect(menu.size.x, i * (menu.size.h / nbButtons), menu.size.w, (menu.size.h / nbButtons));
+			Rect size = Rect.make(menu.size.x, i * (menu.size.h / nbButtons), menu.size.w, (menu.size.h / nbButtons));
 			menu.buttons[i] = new Button();
-			make(menu.buttons[i], title[i], size,);
+			Button.make(menu.buttons[i], title[i], size);
 		}
 	}
-	
+
 	static int update(Menu menu)
 	{
 		for (int i = 0; i < nbButtons; i++)
 		{
-			update(menu.buttons[i]);
+			Button.update(menu.buttons[i]);
 			if (menu.buttons[i].isClicked)
 				return i;
 		}
 		return -1;
 	}
-	
+
 	static void render(Menu menu)
 	{
-		for (int i = 0; i < menu.nbButtons; i++)
-			render(menu.buttons[i]);
+		for (int i = 0; i < nbButtons; i++)
+			Button.render(menu.buttons[i]);
 	}
 }
 

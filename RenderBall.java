@@ -1,4 +1,4 @@
-class Color 
+class Color
 {
 	int r;
 	int v;
@@ -11,7 +11,7 @@ public class RenderBall
 	int x;
 	int y;
 	Color c = new Color();
-	
+
 	static void make(RenderBall[] rB, int n)
 	{
 		for (int i = 0; i < n; i++)
@@ -28,12 +28,12 @@ public class RenderBall
 			}
 		}
 	}
-	
+
 	static void render(RenderBall rB, Ball b)
 	{
-		rB.x = (int)(b.p.x * scale + 10);
-		rB.y = (int)(-b.p.y * scale + 10 + width);
-		rB.r = (int)(b.r * scale);
+		rB.x = (int)(b.p.x * Window.scale + 10);
+		rB.y = (int)(-b.p.y * Window.scale + 10 + Window.width);
+		rB.r = (int)(b.r * Window.scale);
 		EcranGraphique.setColor(rB.c.r, rB.c.v, rB.c.b);
 		EcranGraphique.fillCircle(rB.x, rB.y, rB.r);
 	}
@@ -41,7 +41,7 @@ public class RenderBall
 	static void render(RenderBall[] rB, Ball[] balls, int n)
 	{
 		for (int i = 0; i < n; i++)
-			renderBall(rB[i], balls[i]);
+			render(rB[i], balls[i]);
 	}
 }
 

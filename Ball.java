@@ -1,3 +1,5 @@
+import java.math.BigDecimal;
+
 public class Ball
 {
 	int		id;
@@ -5,7 +7,7 @@ public class Ball
 	Vector	p = new Vector();
 	Vector	v = new Vector();
 	double	m;
-	
+
 	static double dtChocBox(Ball b, double dt)
     {
         double t = dt;
@@ -14,36 +16,36 @@ public class Ball
         tmp = (b.r - b.p.x) / b.v.x;
         if (tmp > 0 && tmp <= t)
             t = tmp;
-        tmp = (length - b.r - b.p.x) / b.v.x;
+        tmp = (Box.length - b.r - b.p.x) / b.v.x;
         if (tmp > 0 && tmp <= t)
             t = tmp;
         tmp = (b.r - b.p.y) / b.v.y;
         if (tmp > 0 && tmp <= t)
             t = tmp;
-        tmp = (width - b.r - b.p.y) / b.v.y;
+        tmp = (Box.width - b.r - b.p.y) / b.v.y;
         if (tmp > 0 && tmp <= t)
             t = tmp;
         if (t < dt)
             return t;
         return -1;
     }
-	
+
 	static void chocBox(Ball b)
     {
         if (b.p.x - b.r == 0)
             b.v.x *= -1;
-        else if (b.p.x + b.r == length)
+        else if (b.p.x + b.r == Box.length)
             b.v.x *= -1;
         else if (b.p.y - b.r == 0)
             b.v.y *= -1;
-        else if (b.p.y + b.r == width)
+        else if (b.p.y + b.r == Box.width)
             b.v.y *= -1;
-		formeTrigo(b.v);
+        Vector.formeTrigo(b.v);
     }
-	
-	static double dtChocBalls(Ball b1, Ball b2, BigDecimal dt)
+
+    static double dtChocBalls(Ball b1, Ball b2, double dt)
     {
-        // Choc equation : a.dt² + b.dt + c = 0
+        // Choc equation : a.dt.dt + b.dt + c = 0
         double t;
         double b = 2 * (b1.v.x - b2.v.x) * (b1.p.x - b2.p.x) + 2 * (b1.v.y - b2.v.y) * (b1.p.y - b2.p.y);
         double a = Math.pow(b1.v.x - b2.v.x, 2) + Math.pow(b1.v.y - b2.v.y, 2);
@@ -60,7 +62,7 @@ public class Ball
             return t;
         return -1;
     }
-	
+
 	static void chocBalls(Ball b1, Ball b2)
     {
 		if (b1.v.m < b2.v.m)
@@ -77,10 +79,10 @@ public class Ball
 		b1.v.a = a1;
 		b2.v.m = v2;
 		b2.v.a = a2;
-		formeCart(b1);
-		formeCart(b2);
+		Vector.formeCart(b1.v);
+		Vector.formeCart(b2.v);
 	}
-	
+
 	static void make(Ball[] b, int n)
 	{
 		for(int i = 0; i < n ; i++)
@@ -89,13 +91,13 @@ public class Ball
 			b[i].r = 0.03;
 			b[i].v.x = 0;
 			b[i].v.y = 0;
-			b[i].m = 1;		
+			b[i].m = 1;
             if (i == n - 1)
             {
                 b[i].v.x = 0.3;
                 b[i].v.y = 0;
             }
-			formeTrigo(b[i].v);
+			Vector.formeTrigo(b[i].v);
 		}
 	}
 }
