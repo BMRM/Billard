@@ -29,7 +29,8 @@ public class Stack
 
 	static Stack	pull(Stack stack)
 	{
-		stack.first = stack.first.next;
+        if (stack.first != null)
+		    stack.first = stack.first.next;
 		return stack;
 	}
 

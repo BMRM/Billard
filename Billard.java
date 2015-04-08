@@ -1,20 +1,16 @@
 public class Billard
 {
 	static double dt = 0.1;
-
-	static int nbBoules(int k)
-	{
-		return (k * (k + 1) / 2) + 1;
-	}
+    static int k = 5;
 
 	public static void main(String[] args)
 	{
-		int n = nbBoules(5);
+		int n = (k * (k + 1) / 2) + 1;
 		Box box = new Box();
 		Window win = new Window();
 
-		Window.make(win, n);
 		Box.make(box, n);
+		Window.make(win, n);
 
         double t;
 		boolean run = true;
@@ -23,10 +19,12 @@ public class Billard
 			switch (Menu.update(win.menu))
 			{
 				case 0 :
-					Box.posTriangle(box.balls, 5);
+					Box.posTriangle(box.balls, k);
+                    box.run = false;
 					break;
 				case 1 :
 					Box.posLine(box.balls, n);
+                    box.run = false;
 					break;
 				case 2 :
 					box.run = false;

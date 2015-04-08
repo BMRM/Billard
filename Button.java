@@ -17,7 +17,7 @@ public class Button
 
 	static void update(Button button)
 	{
-        if (timer < 20)
+        if (timer < 100)
             timer++;
         if (button.isClicked == true)
             button.isClicked = false;
@@ -25,7 +25,7 @@ public class Button
 		&& EcranGraphique.getMouseState() == 1
 		&& EcranGraphique.getMouseButton() == 1
 		&& button.isClicked == false
-        && timer == 20)
+        && timer == 100)
         {
             timer = 0;
 			button.isClicked = true;

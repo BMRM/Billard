@@ -8,37 +8,43 @@ public class Ball
 	Vector	v = new Vector();
 	double	m;
 
-	static double dtChocBox(Ball b, double dt)
+	static BigDecimal dtChocBox(Ball b, BigDecimal dt)
     {
-        double t = dt;
-        double tmp;
+        BigDecimal t = dt;
+        BigDecimal tmp = BigDecimal.ONE.negate();
 
-        tmp = (b.r - b.p.x) / b.v.x;
-        if (tmp > 0 && tmp <= t)
-            t = tmp;
-        tmp = (Box.length - b.r - b.p.x) / b.v.x;
-        if (tmp > 0 && tmp <= t)
-            t = tmp;
-        tmp = (b.r - b.p.y) / b.v.y;
-        if (tmp > 0 && tmp <= t)
-            t = tmp;
-        tmp = (Box.width - b.r - b.p.y) / b.v.y;
-        if (tmp > 0 && tmp <= t)
-            t = tmp;
-        if (t < dt)
+        if (b.v.x != 0)
+        {
+            tmp = new BigDecimal((b.r - b.p.x) / b.v.x).setScale(Box.s, Box.r);
+            if (tmp.compareTo(BigDecimal.ZERO) > 0 && tmp.compareTo(t) <= 0)
+                t = tmp;
+            tmp = new BigDecimal((Box.length - b.r - b.p.x) / b.v.x).setScale(Box.s, Box.r);
+            if (tmp.compareTo(BigDecimal.ZERO) > 0 && tmp.compareTo(t) <= 0)
+                t = tmp;
+        }
+        if (b.v.y != 0)
+        {
+            tmp = new BigDecimal((b.r - b.p.y) / b.v.y).setScale(Box.s, Box.r);
+            if (tmp.compareTo(BigDecimal.ZERO) > 0 && tmp.compareTo(t) <= 0)
+                t = tmp;
+            tmp = new BigDecimal((Box.width - b.r - b.p.y) / b.v.y).setScale(Box.s, Box.r);
+            if (tmp.compareTo(BigDecimal.ZERO) > 0 && tmp.compareTo(t) <= 0)
+                t = tmp;
+        }
+        if (t.compareTo(dt) < 0) // a prendre en compte ==
             return t;
-        return -1;
+        return BigDecimal.ONE.negate();
     }
 
 	static void chocBox(Ball b)
     {
-        if (b.p.x - b.r == 0)
+        if (new BigDecimal(b.p.x - b.r).setScale(Box.s, Box.r).compareTo(BigDecimal.ZERO) == 0)
             b.v.x *= -1;
-        else if (b.p.x + b.r == Box.length)
+        else if (new BigDecimal(b.p.x + b.r - Box.length).setScale(Box.s, Box.r).compareTo(BigDecimal.ZERO) == 0)
             b.v.x *= -1;
-        else if (b.p.y - b.r == 0)
+        else if (new BigDecimal(b.p.y - b.r).setScale(Box.s, Box.r).compareTo(BigDecimal.ZERO) == 0)
             b.v.y *= -1;
-        else if (b.p.y + b.r == Box.width)
+        else if (new BigDecimal(b.p.y + b.r - Box.width).setScale(Box.s, Box.r).compareTo(BigDecimal.ZERO) == 0)
             b.v.y *= -1;
         Vector.formeTrigo(b.v);
     }
@@ -71,34 +77,26 @@ public class Ball
 			b1 = b2;
 			b2 = tmp;
 		}
+        Vector.dump(b1.v);
+        Vector.dump(b2.v);
+        double alpha = (b1.p.y - b2.p.y == 0 && b1.p.x - b2.p.x == 0) ? 0 : Math.atan((b1.p.y - b2.p.y) / (b1.p.x - b2.p.x));
+        alpha = (alpha == 0) ? (b1.p.x < b2.p.x) ? -Math.PI / 2 : Math.PI / 2 :
+            (alpha > 0) ? alpha -(Math.PI / 2) : alpha + Math.PI / 2;
+        Ecran.afficher("alpha = ", alpha, "\n");
+        b1.v.a -= alpha;
+        b2.v.a -= alpha;
 		double a1 = Math.atan((b2.v.m * Math.sin(b2.v.a)) / (b1.v.m * Math.cos(b1.v.a)));
 		double a2 = Math.atan((b1.v.m * Math.sin(b1.v.a)) / (b2.v.m * Math.cos(b2.v.a)));
 		double v1 = Math.sqrt(Math.pow(b2.v.m * Math.sin(b2.v.a), 2) + Math.pow(b1.v.m * Math.cos(b1.v.a), 2));
-		double v2 = Math.sqrt(Math.pow(b2.v.m * Math.sin(b2.v.a), 2) + Math.pow(b1.v.m * Math.cos(b1.v.a), 2));
+		double v2 = Math.sqrt(Math.pow(b1.v.m * Math.sin(b1.v.a), 2) + Math.pow(b2.v.m * Math.cos(b2.v.a), 2));
 		b1.v.m = v1;
-		b1.v.a = a1;
+		b1.v.a = a1 + alpha;
 		b2.v.m = v2;
-		b2.v.a = a2;
+		b2.v.a = a2 + alpha;
 		Vector.formeCart(b1.v);
 		Vector.formeCart(b2.v);
-	}
-
-	static void make(Ball[] b, int n)
-	{
-		for(int i = 0; i < n ; i++)
-		{
-			b[i] = new Ball();
-			b[i].r = 0.03;
-			b[i].v.x = 0;
-			b[i].v.y = 0;
-			b[i].m = 1;
-            if (i == n - 1)
-            {
-                b[i].v.x = 0.3;
-                b[i].v.y = 0;
-            }
-			Vector.formeTrigo(b[i].v);
-		}
+        Vector.dump(b1.v);
+        Vector.dump(b2.v);
 	}
 }
 

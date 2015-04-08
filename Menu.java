@@ -32,7 +32,7 @@ public class Menu
 			Button.update(menu.buttons[i]);
 			if (menu.buttons[i].isClicked)
             {
-                Ecran.afficher("Button clicked : ", Menu.title[i], "\n");
+                Ecran.afficher(Menu.title[i], "\n");
 				return i;
             }
 		}

@@ -13,7 +13,7 @@ public class Vector
 	static Vector formeTrigo(Vector v)
 	{
 		v.m = module(v);
-		v.a = Math.atan(v.y / v.x);
+		v.a = (v.y == 0 && v.x == 0) ? 0 : Math.atan(v.y / v.x);
 		return v;
 	}
 
@@ -23,5 +23,10 @@ public class Vector
 		v.y = v.m * Math.sin(v.a);
 		return v;
 	}
+
+    static void dump(Vector v)
+    {
+        Ecran.afficher("x : ", v.x, " - y : ", v.y, " - m : ", v.m, " - a : ", v.a, "\n");
+    }
 }
 

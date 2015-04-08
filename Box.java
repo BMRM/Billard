@@ -6,7 +6,9 @@ public class Box
 {
 	static double		width = 1.27;
 	static double		length = 2.54;
-    static MathContext  p = new MathContext(5, RoundingMode.HALF_UP);
+    static int          s = 5;
+    static RoundingMode r = RoundingMode.HALF_UP;
+    static MathContext  p = new MathContext(s, r);
 
     int     nbBalls;
 	Ball	balls[];
@@ -16,7 +18,13 @@ public class Box
 	{
         box.nbBalls = nbBalls;
 		box.balls = new Ball[nbBalls];
-		Ball.make(box.balls, nbBalls);
+        for (int i = 0; i < nbBalls; i++)
+        {
+            box.balls[i] = new Ball();
+            box.balls[i].r = 0.03;
+            box.balls[i].m = 1;
+        }
+        posTriangle(box.balls, Billard.k);
     }
 
 	static double	update(Box box, double dt)
@@ -41,7 +49,7 @@ public class Box
 					t = tmp;
 				}
 			}
-			tmp = new BigDecimal(Ball.dtChocBox(bi, t.doubleValue()), p);
+			tmp = Ball.dtChocBox(bi, t);
 			if (tmp.compareTo(BigDecimal.ONE.negate()) != 0 && tmp.compareTo(t) <= 0)
 			{
 				if (tmp.compareTo(t) != 0)
@@ -62,21 +70,24 @@ public class Box
 			switch (stack.first.event.type)
 			{
 				case 0 :
+                    Ecran.afficher("ChocBalls\n");
 					Ball.chocBalls(stack.first.event.b1, stack.first.event.b2);
 					break;
 				case 1 :
+                    Ecran.afficher("ChocBox\n");
 					Ball.chocBox(stack.first.event.b1);
 					break;
 				default :
 					break;
 			}
+            Stack.pull(stack);
 		}
 	}
 
 	static void evolve(Ball b, double dt)
 	{
-		b.p.x = dt * b.v.x;
-		b.p.x = dt * b.v.y;
+		b.p.x += dt * b.v.x;
+		b.p.y += dt * b.v.y;
 	}
 
 	static void evolve(Ball[] balls, int n, double dt)
@@ -101,13 +112,19 @@ public class Box
 		int b = 0;
 		int n = (k * (k+1)/2) + 1;
 		balls[n - 1].p.x = length/3;
-		balls[n - 1].p.y = width/2 + 0.02;
+		balls[n - 1].p.y = width/2;
+        balls[n - 1].v.x = 0.1;
+        balls[n - 1].v.y = 0;
+        Vector.formeTrigo(balls[n - 1].v);
 		for (int i = 1; i <= k; i++)
 		{
 			for (int j = 0; j <= i - 1; j++)
 			{
 				balls[b].p.x = (2 * length / 3) + decal;
 				balls[b].p.y = width / 2 + (2 * (balls[b].r + 0.003) * j) - ((decal)/2);
+                balls[b].v.x = 0;
+                balls[b].v.y = 0;
+                Vector.formeTrigo(balls[b].v);
 				b++;
 			}
 			decal += (2 * balls[i].r);

@@ -31,8 +31,8 @@ public class RenderBall
 
 	static void render(RenderBall rB, Ball b)
 	{
-		rB.x = (int)(b.p.x * Window.scale + 10);
-		rB.y = (int)(-b.p.y * Window.scale + 10 + Window.width);
+		rB.x = (int)(b.p.x * Window.scale) + 10;
+		rB.y = (int)(-b.p.y * Window.scale) - 10 + Window.height;
 		rB.r = (int)(b.r * Window.scale);
 		EcranGraphique.setColor(rB.c.r, rB.c.v, rB.c.b);
 		EcranGraphique.fillCircle(rB.x, rB.y, rB.r);
