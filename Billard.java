@@ -23,7 +23,7 @@ public class Billard
 			switch (Menu.update(win.menu))
 			{
 				case 0 :
-					Box.posTriangle(box.balls, n);
+					Box.posTriangle(box.balls, 5);
 					break;
 				case 1 :
 					Box.posLine(box.balls, n);

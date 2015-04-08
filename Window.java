@@ -1,8 +1,9 @@
 public class Window
 {
-	static int width = 800;
-	static int height = 600;
+    static int sizeMenu = 200;
 	static int scale = 200;
+	static int width = (int)(Box.length * scale) + sizeMenu;
+	static int height = (int)(Box.width * scale) + 20;
 
     int             nbBalls;
 	RenderBall[]	renderBalls;
@@ -15,7 +16,7 @@ public class Window
 		RenderBall.make(win.renderBalls, nbBalls);
 
 		win.menu = new Menu();
-		Menu.make(win.menu, Rect.make(300, 0, 100, width));
+		Menu.make(win.menu, Rect.make((int)(Box.length * scale) + 20, 0, sizeMenu, height));
 
 		EcranGraphique.init(50 , 50, width + 50, height + 50, width, height, "Billard");
 	}
@@ -23,9 +24,9 @@ public class Window
 	static void renderBox()
 	{
 		EcranGraphique.setColor(0, 10, 0);
-		EcranGraphique.fillRect(0, 0, (int)(Box.length * scale + 20), (int)(Box.width * scale + 20));
+		EcranGraphique.fillRect(0, 0, (int)(Box.length * scale) + 20, height);
 		EcranGraphique.setColor(0, 50, 0);
-		EcranGraphique.fillRect(10, 10, width, height);
+		EcranGraphique.fillRect(10, 10, (int)(Box.length * scale), (int)(Box.width * scale));
 	}
 
 	static void render(Window win, Box box)
@@ -33,7 +34,6 @@ public class Window
 		renderBox();
 		Menu.render(win.menu);
 		RenderBall.render(win.renderBalls, box.balls, win.nbBalls);
-		EcranGraphique.flush();
 	}
 }
 
