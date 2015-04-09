@@ -49,24 +49,25 @@ public class Ball
         Vector.formeTrigo(b.v);
     }
 
-    static double dtChocBalls(Ball b1, Ball b2, double dt)
+    static BigDecimal dtChocBalls(Ball b1, Ball b2, BigDecimal dt)
     {
         // Choc equation : a.dt.dt + b.dt + c = 0
-        double t;
+        BigDecimal t = BigDecimal.ZERO;
         double b = 2 * (b1.v.x - b2.v.x) * (b1.p.x - b2.p.x) + 2 * (b1.v.y - b2.v.y) * (b1.p.y - b2.p.y);
         double a = Math.pow(b1.v.x - b2.v.x, 2) + Math.pow(b1.v.y - b2.v.y, 2);
         double c = Math.pow(b1.p.x - b2.p.x, 2) + Math.pow(b1.p.y - b2.p.y, 2) - Math.pow(b1.r + b2.r, 2);
         double delta = Math.pow(b, 2) - 4 * a * c;
 
-        if (delta > 0)
-            t = Math.min((-b + Math.sqrt(delta)) / (2 * a), (-b - Math.sqrt(delta)) / (2 * a));
-        else if (delta == 0)
-            t = (-b) / (2 * a);
-        else
-            return -1;
-        if (t > 0 && t <= dt)
+        if (a > 0)
+        {
+            if (delta > 0)
+                t = new BigDecimal(Math.min((-b + Math.sqrt(delta)) / (2 * a), (-b - Math.sqrt(delta)) / (2 * a))).setScale(Box.s, Box.r);
+            else if (delta == 0)
+                t = new BigDecimal((-b) / (2 * a)).setScale(Box.s, Box.r);
+        }
+        if (t.compareTo(BigDecimal.ZERO) > 0 && t.compareTo(dt) <= 0)
             return t;
-        return -1;
+        return BigDecimal.ONE.negate();
     }
 
 	static void chocBalls(Ball b1, Ball b2)
@@ -79,22 +80,46 @@ public class Ball
 		}
         Vector.dump(b1.v);
         Vector.dump(b2.v);
-        double alpha = (b1.p.y - b2.p.y == 0 && b1.p.x - b2.p.x == 0) ? 0 : Math.atan((b1.p.y - b2.p.y) / (b1.p.x - b2.p.x));
-        alpha = (alpha == 0) ? (b1.p.x < b2.p.x) ? -Math.PI / 2 : Math.PI / 2 :
-            (alpha > 0) ? alpha -(Math.PI / 2) : alpha + Math.PI / 2;
+
+        double alpha = Math.atan((b1.p.y - b2.p.y) / (b1.p.x - b2.p.x));
+        alpha = (alpha > 0) ? alpha - Math.PI / 2 : alpha + Math.PI / 2;
         Ecran.afficher("alpha = ", alpha, "\n");
-        b1.v.a -= alpha;
-        b2.v.a -= alpha;
+
+        double x1 = b1.v.x;
+        b1.v.x = Math.cos(alpha) * x1 + Math.sin(alpha) * b1.v.y;
+        b1.v.y = -Math.sin(alpha) * x1 + Math.cos(alpha) * b1.v.y;
+        double x2 = b2.v.x;
+        b2.v.x = Math.cos(alpha) * x2 + Math.sin(alpha) * b2.v.y;
+        b2.v.y = -Math.sin(alpha) * x2 + Math.cos(alpha) * b2.v.y;
+        Vector.formeTrigo(b1.v);
+        Vector.formeTrigo(b2.v);
+        Vector.dump(b1.v);
+        Vector.dump(b2.v);
+        //b1.v.a -= alpha;
+        //b2.v.a = (b2.v.a == 0) ? 0 : b2.v.a + alpha;
 		double a1 = Math.atan((b2.v.m * Math.sin(b2.v.a)) / (b1.v.m * Math.cos(b1.v.a)));
 		double a2 = Math.atan((b1.v.m * Math.sin(b1.v.a)) / (b2.v.m * Math.cos(b2.v.a)));
 		double v1 = Math.sqrt(Math.pow(b2.v.m * Math.sin(b2.v.a), 2) + Math.pow(b1.v.m * Math.cos(b1.v.a), 2));
 		double v2 = Math.sqrt(Math.pow(b1.v.m * Math.sin(b1.v.a), 2) + Math.pow(b2.v.m * Math.cos(b2.v.a), 2));
 		b1.v.m = v1;
-		b1.v.a = a1 + alpha;
+		b1.v.a = a1;
 		b2.v.m = v2;
-		b2.v.a = a2 + alpha;
+		b2.v.a = a2;
 		Vector.formeCart(b1.v);
 		Vector.formeCart(b2.v);
+        Vector.dump(b1.v);
+        Vector.dump(b2.v);
+
+        alpha *= -1;
+        x1 = b1.v.x;
+        b1.v.x = Math.cos(alpha) * x1 - Math.sin(alpha) * b1.v.y;
+        b1.v.y = Math.sin(alpha) * x1 + Math.cos(alpha) * b1.v.y;
+        x2 = b2.v.x;
+        b2.v.x = Math.cos(alpha) * x2 - Math.sin(alpha) * b2.v.y;
+        b2.v.y = Math.sin(alpha) * x2 + Math.cos(alpha) * b2.v.y;
+        Vector.formeTrigo(b1.v);
+        Vector.formeTrigo(b2.v);
+
         Vector.dump(b1.v);
         Vector.dump(b2.v);
 	}

@@ -40,7 +40,7 @@ public class Box
 			for (int j = i + 1; j < box.nbBalls; j++)
 			{
                 bj = box.balls[j];
-				tmp = new BigDecimal(Ball.dtChocBalls(bi, bj, t.doubleValue()), p);
+				tmp = Ball.dtChocBalls(bi, bj, t);
 				if (tmp.compareTo(BigDecimal.ONE.negate()) != 0 && tmp.compareTo(t) <= 0)
 				{
 					if (tmp.compareTo(t) != 0)
@@ -111,9 +111,9 @@ public class Box
 		double decal = 0;
 		int b = 0;
 		int n = (k * (k+1)/2) + 1;
-		balls[n - 1].p.x = length/3;
-		balls[n - 1].p.y = width/2;
-        balls[n - 1].v.x = 0.1;
+		balls[n - 1].p.x = length*3/4;
+		balls[n - 1].p.y = width/2 + 0.03;
+        balls[n - 1].v.x = -0.1;
         balls[n - 1].v.y = 0;
         Vector.formeTrigo(balls[n - 1].v);
 		for (int i = 1; i <= k; i++)

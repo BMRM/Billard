@@ -13,7 +13,18 @@ public class Vector
 	static Vector formeTrigo(Vector v)
 	{
 		v.m = module(v);
-		v.a = (v.y == 0 && v.x == 0) ? 0 : Math.atan(v.y / v.x);
+        if (v.x > 0)
+            v.a = Math.atan(v.y / v.x);
+        if (v.x < 0 && v.y >= 0)
+            v.a = Math.atan(v.y / v.x) + Math.PI;
+        if (v.x < 0 && v.y < 0)
+            v.a = Math.atan(v.y / v.x) - Math.PI;
+        if (v.x == 0 && v.y > 0)
+            v.a = Math.PI / 2;
+        if (v.x == 0 && v.y < 0)
+            v.a = -Math.PI / 2;
+        if (v.x == 0 && v.y == 0)
+            v.a = 0;
 		return v;
 	}
 
