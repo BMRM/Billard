@@ -1,7 +1,7 @@
 public class Window
 {
     static int sizeMenu = 200;
-	static int scale = 200;
+	static int scale = 300;
 	static int width = (int)(Box.length * scale) + sizeMenu;
 	static int height = (int)(Box.width * scale) + 20;
 

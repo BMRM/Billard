@@ -10,21 +10,28 @@ public class Vector
         return Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2));
     }
 
-	static Vector formeTrigo(Vector v)
+    static double atan(double y, double x)
+    {
+        double a = 0;
+        if (x > 0)
+            a = Math.atan(y / x);
+        if (x < 0 && y >= 0)
+            a = Math.atan(y / x) + Math.PI;
+        if (x < 0 && y < 0)
+            a = Math.atan(y / x) - Math.PI;
+        if (x == 0 && y > 0)
+            a = Math.PI / 2;
+        if (x == 0 && y < 0)
+            a = -Math.PI / 2;
+        if (x == 0 && y == 0)
+            a = 0;
+        return a;
+    }
+
+	static Vector formePol(Vector v)
 	{
 		v.m = module(v);
-        if (v.x > 0)
-            v.a = Math.atan(v.y / v.x);
-        if (v.x < 0 && v.y >= 0)
-            v.a = Math.atan(v.y / v.x) + Math.PI;
-        if (v.x < 0 && v.y < 0)
-            v.a = Math.atan(v.y / v.x) - Math.PI;
-        if (v.x == 0 && v.y > 0)
-            v.a = Math.PI / 2;
-        if (v.x == 0 && v.y < 0)
-            v.a = -Math.PI / 2;
-        if (v.x == 0 && v.y == 0)
-            v.a = 0;
+        v.a = atan(v.y, v.x);
 		return v;
 	}
 

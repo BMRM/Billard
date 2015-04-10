@@ -46,7 +46,7 @@ public class Ball
             b.v.y *= -1;
         else if (new BigDecimal(b.p.y + b.r - Box.width).setScale(Box.s, Box.r).compareTo(BigDecimal.ZERO) == 0)
             b.v.y *= -1;
-        Vector.formeTrigo(b.v);
+        Vector.formePol(b.v);
     }
 
     static BigDecimal dtChocBalls(Ball b1, Ball b2, BigDecimal dt)
@@ -81,24 +81,24 @@ public class Ball
         Vector.dump(b1.v);
         Vector.dump(b2.v);
 
-        double alpha = Math.atan((b1.p.y - b2.p.y) / (b1.p.x - b2.p.x));
+        double alpha = -Vector.atan(b1.p.y - b2.p.y, b1.p.x - b2.p.x);
         alpha = (alpha > 0) ? alpha - Math.PI / 2 : alpha + Math.PI / 2;
         Ecran.afficher("alpha = ", alpha, "\n");
 
         double x1 = b1.v.x;
-        b1.v.x = Math.cos(alpha) * x1 + Math.sin(alpha) * b1.v.y;
-        b1.v.y = -Math.sin(alpha) * x1 + Math.cos(alpha) * b1.v.y;
+        b1.v.x = Math.cos(alpha) * x1 - Math.sin(alpha) * b1.v.y;
+        b1.v.y = Math.sin(alpha) * x1 + Math.cos(alpha) * b1.v.y;
         double x2 = b2.v.x;
-        b2.v.x = Math.cos(alpha) * x2 + Math.sin(alpha) * b2.v.y;
-        b2.v.y = -Math.sin(alpha) * x2 + Math.cos(alpha) * b2.v.y;
-        Vector.formeTrigo(b1.v);
-        Vector.formeTrigo(b2.v);
+        b2.v.x = Math.cos(alpha) * x2 - Math.sin(alpha) * b2.v.y;
+        b2.v.y = Math.sin(alpha) * x2 + Math.cos(alpha) * b2.v.y;
+        Vector.formePol(b1.v);
+        Vector.formePol(b2.v);
         Vector.dump(b1.v);
         Vector.dump(b2.v);
         //b1.v.a -= alpha;
         //b2.v.a = (b2.v.a == 0) ? 0 : b2.v.a + alpha;
-		double a1 = Math.atan((b2.v.m * Math.sin(b2.v.a)) / (b1.v.m * Math.cos(b1.v.a)));
-		double a2 = Math.atan((b1.v.m * Math.sin(b1.v.a)) / (b2.v.m * Math.cos(b2.v.a)));
+		double a1 = Vector.atan(b2.v.m * Math.sin(b2.v.a), b1.v.m * Math.cos(b1.v.a));
+		double a2 = Vector.atan(b1.v.m * Math.sin(b1.v.a), b2.v.m * Math.cos(b2.v.a));
 		double v1 = Math.sqrt(Math.pow(b2.v.m * Math.sin(b2.v.a), 2) + Math.pow(b1.v.m * Math.cos(b1.v.a), 2));
 		double v2 = Math.sqrt(Math.pow(b1.v.m * Math.sin(b1.v.a), 2) + Math.pow(b2.v.m * Math.cos(b2.v.a), 2));
 		b1.v.m = v1;
@@ -110,15 +110,14 @@ public class Ball
         Vector.dump(b1.v);
         Vector.dump(b2.v);
 
-        alpha *= -1;
         x1 = b1.v.x;
-        b1.v.x = Math.cos(alpha) * x1 - Math.sin(alpha) * b1.v.y;
-        b1.v.y = Math.sin(alpha) * x1 + Math.cos(alpha) * b1.v.y;
+        b1.v.x = Math.cos(alpha) * x1 + Math.sin(alpha) * b1.v.y;
+        b1.v.y = -Math.sin(alpha) * x1 + Math.cos(alpha) * b1.v.y;
         x2 = b2.v.x;
-        b2.v.x = Math.cos(alpha) * x2 - Math.sin(alpha) * b2.v.y;
-        b2.v.y = Math.sin(alpha) * x2 + Math.cos(alpha) * b2.v.y;
-        Vector.formeTrigo(b1.v);
-        Vector.formeTrigo(b2.v);
+        b2.v.x = Math.cos(alpha) * x2 + Math.sin(alpha) * b2.v.y;
+        b2.v.y = -Math.sin(alpha) * x2 + Math.cos(alpha) * b2.v.y;
+        Vector.formePol(b1.v);
+        Vector.formePol(b2.v);
 
         Vector.dump(b1.v);
         Vector.dump(b2.v);

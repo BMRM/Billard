@@ -111,11 +111,11 @@ public class Box
 		double decal = 0;
 		int b = 0;
 		int n = (k * (k+1)/2) + 1;
-		balls[n - 1].p.x = length*3/4;
-		balls[n - 1].p.y = width/2 + 0.03;
-        balls[n - 1].v.x = -0.1;
+		balls[n - 1].p.x = length/3;
+		balls[n - 1].p.y = width/2;
+        balls[n - 1].v.x = 1;
         balls[n - 1].v.y = 0;
-        Vector.formeTrigo(balls[n - 1].v);
+        Vector.formePol(balls[n - 1].v);
 		for (int i = 1; i <= k; i++)
 		{
 			for (int j = 0; j <= i - 1; j++)
@@ -124,7 +124,7 @@ public class Box
 				balls[b].p.y = width / 2 + (2 * (balls[b].r + 0.003) * j) - ((decal)/2);
                 balls[b].v.x = 0;
                 balls[b].v.y = 0;
-                Vector.formeTrigo(balls[b].v);
+                Vector.formePol(balls[b].v);
 				b++;
 			}
 			decal += (2 * balls[i].r);

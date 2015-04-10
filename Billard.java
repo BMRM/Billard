@@ -1,7 +1,7 @@
 public class Billard
 {
 	static double dt = 0.1;
-    static int k = 1;
+    static int k = 5;
 
 	public static void main(String[] args)
 	{
