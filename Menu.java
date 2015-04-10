@@ -2,13 +2,13 @@ public class Menu
 {
 	static int nbButtons = 5;
 	static int width = 200;
-    static int oldButton;
-	static String title[] = {
-		"Billard classique",
-		"Boules en ligne",
-		"Pause",
-		"Demarrer",
-		"Quitter"};
+    static int type[] = {0, 0, 1, 2, 0};
+	static String title[][] = {
+        {"Billard classique"},
+        {"Boules en ligne"},
+        {"Demarrer", "Pause"},
+        {"dt : "},
+        {"Quitter"}};
 
 	Button	buttons[];
 	Rect	size;
@@ -22,22 +22,17 @@ public class Menu
 		{
 			Rect size = Rect.make(menu.size.x, i * (menu.size.h / nbButtons), menu.size.w, (menu.size.h / nbButtons));
 			menu.buttons[i] = new Button();
-			Button.make(menu.buttons[i], title[i], size);
+			Button.make(menu.buttons[i], type[i], title[i], size);
 		}
 	}
 
-	static int update(Menu menu)
+	static int update(Menu menu, Box box)
 	{
 		for (int i = 0; i < nbButtons; i++)
 		{
-			Button.update(menu.buttons[i]);
-			if (menu.buttons[i].isClicked)
-            {
-                if (oldButton == i)
-                    return -1;
-                oldButton = i;
+			if (Button.update(menu.buttons[i], box) != -1
+			&& menu.buttons[i].state % 2 == 1)
 				return i;
-            }
 		}
 		return -1;
 	}

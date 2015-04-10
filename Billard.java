@@ -1,6 +1,6 @@
 public class Billard
 {
-	static double dt = 0.1;
+	static double dt = 0.05;
     static int k = 5;
 
 	public static void main(String[] args)
@@ -16,24 +16,21 @@ public class Billard
 		boolean run = true;
 		while (run)
 		{
-			switch (Menu.update(win.menu))
+			switch (Menu.update(win.menu, box))
 			{
 				case 0 :
 					Box.posTriangle(box.balls, k);
-                    box.run = false;
 					break;
 				case 1 :
 					Box.posLine(box.balls, n);
-                    box.run = false;
 					break;
 				case 2 :
-					box.run = false;
+					box.run = (box.run == true) ? false : true;
 					break;
 				case 3 :
-					box.run = true;
 					break;
-				case 4 :
-					run = false;
+                case 4 :
+                    run = false;
 					break;
 				default :
 					break;

@@ -1,10 +1,3 @@
-class Color
-{
-	int r;
-	int v;
-	int b;
-}
-
 public class RenderBall
 {
 	int r;

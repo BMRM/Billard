@@ -18,7 +18,7 @@ public class Window
 		win.menu = new Menu();
 		Menu.make(win.menu, Rect.make((int)(Box.length * scale) + 20, 0, sizeMenu, height));
 
-		EcranGraphique.init(50 , 50, width + 50, height + 50, width, height, "Billard");
+		EcranGraphique.init(50 , 50, width + 100, height + 100, width, height, "Billard");
 	}
 
 	static void renderBox()

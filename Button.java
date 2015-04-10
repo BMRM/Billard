@@ -2,38 +2,60 @@ public class Button
 {
 	static int b = 3;
 
-	String	title;
+    int     type = 0;
+	String	title[];
+    Color   design[][];
 	Rect	size;
 	Rect	border;
-	boolean isClicked = false;
+    int     state = 0;
 
-	static void make(Button button, String title, Rect size)
+	static void make(Button button, int type, String title[], Rect size)
 	{
+        button.type = type;
 		button.title = title;
 		button.size = Rect.make(size.x + b, size.y + b, size.w - 2 * b, size.h - 2 * b);
+        button.design = new Color[4][4];
+        button.design[0][0] = Color.make(60, 60, 60);
+        button.design[0][1] = Color.make(80, 80, 80);
+        button.design[1][0] = button.design[0][1];
+        button.design[1][1] = button.design[0][0];
+        button.design[2][0] = button.design[1][0];
+        button.design[2][1] = button.design[1][1];
+        button.design[3][0] = button.design[2][1];
+        button.design[3][1] = button.design[2][0];
 		button.border = size;
 	}
 
-	static void update(Button button)
+	static int update(Button b, Box box)
 	{
-        if (button.isClicked == true
+        if (b.type == 2)
+            b.title[0] += String.valueOf(Billard.dt);
+
+        if (b.state % 2 == 1
         && EcranGraphique.getMouseState() == 0)
-            button.isClicked = false;
-		if (Rect.isIn(button.size, EcranGraphique.getMouseX(), EcranGraphique.getMouseY())
+        {
+            b.state = (b.state + 1) % (2 + 2 * b.type);
+            return b.state;
+        }
+		if (Rect.isIn(b.size, EcranGraphique.getMouseX(), EcranGraphique.getMouseY())
 		&& EcranGraphique.getMouseState() == 1
 		&& EcranGraphique.getMouseButton() == 1
-		&& button.isClicked == false)
-			button.isClicked = true;
+		&& b.state % 2 == 0)
+        {
+			b.state++;
+            return b.state;
+        }
+        return -1;
 	}
 
-	static void render(Button button)
+	static void render(Button b)
 	{
-		EcranGraphique.setColor(60, 60, 60);
-		Rect.fill(button.border);
-		EcranGraphique.setColor(80, 80, 80);
-		Rect.fill(button.size);
+		Color.setEcranGraphique(b.design[b.state][0]);
+		Rect.fill(b.border);
+		Color.setEcranGraphique(b.design[b.state][1]);
+		Rect.fill(b.size);
 		EcranGraphique.setColor(255, 255, 255);
-		EcranGraphique.drawString(button.size.x + 10, button.size.y + button.size.h - 10, 3, button.title);
+		EcranGraphique.drawString(b.size.x + 10, b.size.y + b.size.h - 10, 3, b.title[(b.type % 2) * b.state / 2]);
 	}
 }
 
