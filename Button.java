@@ -1,7 +1,6 @@
 public class Button
 {
 	static int b = 3;
-    static int timer = 0;
 
 	String	title;
 	Rect	size;
@@ -17,19 +16,14 @@ public class Button
 
 	static void update(Button button)
 	{
-        if (timer < 100)
-            timer++;
-        if (button.isClicked == true)
+        if (button.isClicked == true
+        && EcranGraphique.getMouseState() == 0)
             button.isClicked = false;
 		if (Rect.isIn(button.size, EcranGraphique.getMouseX(), EcranGraphique.getMouseY())
 		&& EcranGraphique.getMouseState() == 1
 		&& EcranGraphique.getMouseButton() == 1
-		&& button.isClicked == false
-        && timer == 100)
-        {
-            timer = 0;
+		&& button.isClicked == false)
 			button.isClicked = true;
-        }
 	}
 
 	static void render(Button button)

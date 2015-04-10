@@ -2,6 +2,7 @@ public class Menu
 {
 	static int nbButtons = 5;
 	static int width = 200;
+    static int oldButton;
 	static String title[] = {
 		"Billard classique",
 		"Boules en ligne",
@@ -32,7 +33,9 @@ public class Menu
 			Button.update(menu.buttons[i]);
 			if (menu.buttons[i].isClicked)
             {
-                Ecran.afficher(Menu.title[i], "\n");
+                if (oldButton == i)
+                    return -1;
+                oldButton = i;
 				return i;
             }
 		}

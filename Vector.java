@@ -42,6 +42,24 @@ public class Vector
 		return v;
 	}
 
+    static Vector newBase(Vector v, double alpha)
+    {
+        double x1 = v.x;
+        v.x = Math.cos(alpha) * x1 - Math.sin(alpha) * v.y;
+        v.y = Math.sin(alpha) * x1 + Math.cos(alpha) * v.y;
+        formePol(v);
+        return v;
+    }
+
+    static Vector reverseBase(Vector v, double alpha)
+    {
+        double x1 = v.x;
+        v.x = Math.cos(alpha) * x1 + Math.sin(alpha) * v.y;
+        v.y = -Math.sin(alpha) * x1 + Math.cos(alpha) * v.y;
+        formePol(v);
+        return v;
+    }
+
     static void dump(Vector v)
     {
         Ecran.afficher("x : ", v.x, " - y : ", v.y, " - m : ", v.m, " - a : ", v.a, "\n");

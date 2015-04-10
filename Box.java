@@ -70,11 +70,9 @@ public class Box
 			switch (stack.first.event.type)
 			{
 				case 0 :
-                    Ecran.afficher("ChocBalls\n");
 					Ball.chocBalls(stack.first.event.b1, stack.first.event.b2);
 					break;
 				case 1 :
-                    Ecran.afficher("ChocBox\n");
 					Ball.chocBox(stack.first.event.b1);
 					break;
 				default :
