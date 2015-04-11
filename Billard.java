@@ -1,6 +1,5 @@
 public class Billard
 {
-	static double dt = 0.05;
     static int k = 5;
 
 	public static void main(String[] args)
@@ -14,6 +13,7 @@ public class Billard
 
         double t;
 		boolean run = true;
+        int button = -1;
 		while (run)
 		{
 			switch (Menu.update(win.menu, box))
@@ -28,6 +28,7 @@ public class Billard
 					box.run = (box.run == true) ? false : true;
 					break;
 				case 3 :
+                    Input.kb = true;
 					break;
                 case 4 :
                     run = false;
@@ -35,14 +36,9 @@ public class Billard
 				default :
 					break;
 			}
-			if (box.run)
-			{
-				t = 0;
-	            while (t < dt)
-				    t += Box.update(box, dt - t);
-            }
+            Input.update();
+            Box.update(box);
 			Window.render(win, box);
-			EcranGraphique.flush();
 			EcranGraphique.wait(10);
 		}
 		EcranGraphique.exit();

@@ -4,6 +4,7 @@ import java.math.RoundingMode;
 
 public class Box
 {
+    static double       dt = 0.05;
 	static double		width = 1.27;
 	static double		length = 2.54;
     static int          s = 5;
@@ -25,6 +26,16 @@ public class Box
             box.balls[i].m = 1;
         }
         posTriangle(box.balls, Billard.k);
+    }
+
+    static void     update(Box box)
+    {
+        if (box.run)
+        {
+            double t = 0;
+            while (t < Box.dt)
+                t += update(box, Box.dt);
+        }
     }
 
 	static double	update(Box box, double dt)

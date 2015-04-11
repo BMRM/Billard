@@ -29,12 +29,12 @@ public class Button
 	static int update(Button b, Box box)
 	{
         if (b.type == 2)
-            b.title[0] += String.valueOf(Billard.dt);
+            b.title[1] = String.valueOf(Box.dt);
 
         if (b.state % 2 == 1
         && EcranGraphique.getMouseState() == 0)
         {
-            b.state = (b.state + 1) % (2 + 2 * b.type);
+            b.state = (b.state + 1) % (2 + 2 * (b.type % 2));
             return b.state;
         }
 		if (Rect.isIn(b.size, EcranGraphique.getMouseX(), EcranGraphique.getMouseY())
@@ -55,7 +55,10 @@ public class Button
 		Color.setEcranGraphique(b.design[b.state][1]);
 		Rect.fill(b.size);
 		EcranGraphique.setColor(255, 255, 255);
-		EcranGraphique.drawString(b.size.x + 10, b.size.y + b.size.h - 10, 3, b.title[(b.type % 2) * b.state / 2]);
+        if (b.type == 2)
+		    EcranGraphique.drawString(b.size.x + 10, b.size.y + b.size.h - 10, 3, b.title[0] + b.title[1]);
+        else
+		    EcranGraphique.drawString(b.size.x + 10, b.size.y + b.size.h - 10, 3, b.title[b.type * b.state / 2]);
 	}
 }
 

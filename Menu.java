@@ -7,7 +7,7 @@ public class Menu
         {"Billard classique"},
         {"Boules en ligne"},
         {"Demarrer", "Pause"},
-        {"dt : "},
+        {"dt : ", ""},
         {"Quitter"}};
 
 	Button	buttons[];
