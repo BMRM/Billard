@@ -2,7 +2,7 @@ class Indicator
 {
     String  name;
     String  unite;
-    double  value;
+    int  value;
     int     precision = 2;
     Rect    size;
 }
@@ -35,10 +35,20 @@ public class Board
         return b;
     }
 
+    static void update(Board b)
+    {
+        update(b.indicator[0]);
+    }
+
+    static void update(Indicator i)
+    {
+        i.value = Window.fps;
+    }
+
     static void render(Indicator i)
     {
         EcranGraphique.setColor(255, 255, 255);
-        EcranGraphique.drawString(i.size.x, i.size.y, 3, i.name + String.valueOf(i.value) + i.precision);
+        EcranGraphique.drawString(i.size.x, i.size.y, 3, i.name + String.valueOf(i.value) + i.unite);
     }
 
     static void render(Graph g)
@@ -48,6 +58,7 @@ public class Board
 
     static void render(Board b)
     {
+        update(b);
         render(b.indicator[0]);
     }
 }

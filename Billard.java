@@ -11,9 +11,8 @@ public class Billard
 		Box.make(box, n);
 		Window.make(win, n);
 
-        double t;
+        long    elapsed = 0;
 		boolean run = true;
-        int button = -1;
 		while (run)
 		{
 			switch (Menu.update(win.menu, box))
@@ -39,7 +38,9 @@ public class Billard
             Input.update();
             Box.update(box);
 			Window.render(win, box);
-			EcranGraphique.wait(10);
+			EcranGraphique.wait((int)Math.max(0, 1000 / 60.0 - (System.nanoTime() - elapsed) / 1000000));
+            Window.fps = (int)(1000 / (double)((System.nanoTime() - elapsed) / 1000000));
+            elapsed = System.nanoTime();
 		}
 		EcranGraphique.exit();
 	}

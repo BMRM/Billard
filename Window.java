@@ -1,6 +1,6 @@
 public class Window
 {
-    static double fps = 60;
+    static int fps = 60;
     static int sizeMenu = 200;
     static int sizeBoard = 200;
 	static int scale = 300;
