@@ -44,5 +44,17 @@ public class Stack
 	{
 		return (stack.first == null);
 	}
+
+    static int  size(Stack stack)
+    {
+        int i = 0;
+        Item p = stack.first;
+        while (p != null)
+        {
+            i++;
+            p = p.next;
+        }
+        return i;
+    }
 }
 

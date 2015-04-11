@@ -10,6 +10,7 @@ public class Box
     static int          s = 5;
     static RoundingMode r = RoundingMode.HALF_UP;
     static MathContext  p = new MathContext(s, r);
+    static int          nbChoc = 0;
 
     int     nbBalls;
 	Ball	balls[];
@@ -90,6 +91,7 @@ public class Box
 					break;
 			}
             Stack.pull(stack);
+            nbChoc++;
 		}
 	}
 
