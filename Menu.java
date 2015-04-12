@@ -1,13 +1,17 @@
 public class Menu
 {
-	static int nbButtons = 5;
+	static int nbButtons = 9;
 	static int width = 200;
-    static int type[] = {0, 0, 1, 2, 0};
+    static int type[] = {0, 0, 1, 2, 2, 2, 2, 2, 0};
 	static String title[][] = {
         {"Billard classique"},
         {"Boules en ligne"},
         {"Demarrer", "Pause"},
-        {"dt : ", ""},
+        {"dt : ", String.valueOf(Box.dt)},
+        {"Precision : ", String.valueOf(Box.s)},
+        {"FPS : ", String.valueOf(Window.fps)},
+        {"Rayon : ", String.valueOf(Box.rayon)},
+        {"Boule : ", String.valueOf(Box.ballFocus.id)},
         {"Quitter"}};
 
 	Button	buttons[];
@@ -28,6 +32,11 @@ public class Menu
 
 	static int update(Menu menu, Box box)
 	{
+        Box.dt = Double.valueOf(menu.buttons[3].title[1]);
+        Box.s = Integer.valueOf(menu.buttons[4].title[1]);
+        Window.fps = Integer.valueOf(menu.buttons[5].title[1]);
+        Box.rayon = Double.valueOf(menu.buttons[6].title[1]);
+        Box.ballFocus = box.balls[Integer.valueOf(menu.buttons[7].title[1])];
 		for (int i = 0; i < nbButtons; i++)
 		{
 			if (Button.update(menu.buttons[i], box) != -1

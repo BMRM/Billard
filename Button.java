@@ -28,9 +28,6 @@ public class Button
 
 	static int update(Button b, Box box)
 	{
-        if (b.type == 2)
-            b.title[1] = String.valueOf(Box.dt);
-
         if (b.state % 2 == 1
         && EcranGraphique.getMouseState() == 0)
         {

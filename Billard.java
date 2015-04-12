@@ -28,8 +28,25 @@ public class Billard
 					break;
 				case 3 :
                     Input.kb = true;
+                    Input.out = 3;
 					break;
                 case 4 :
+                    Input.kb = true;
+                    Input.out = 4;
+                    break;
+                case 5 :
+                    Input.kb = true;
+                    Input.out = 5;
+                    break;
+                case 6 :
+                    Input.kb = true;
+                    Input.out = 6;
+                    break;
+                case 7 :
+                    Input.kb = true;
+                    Input.out = 7;
+                    break;
+                case 8 :
                     run = false;
 					break;
 				default :
@@ -37,10 +54,11 @@ public class Billard
 			}
             Input.update();
             Box.update(box);
-			Window.render(win, box);
-			EcranGraphique.wait((int)Math.max(0, 1000 / 60.0 - (System.nanoTime() - elapsed) / 1000000));
+            if (Window.fps > 0)
+			    EcranGraphique.wait((int)Math.max(0, 1000 / (double)Window.fps - (System.nanoTime() - elapsed) / 1000000));
             Window.fps = (int)(1000 / (double)((System.nanoTime() - elapsed) / 1000000));
             elapsed = System.nanoTime();
+			Window.render(win, box);
 		}
 		EcranGraphique.exit();
 	}

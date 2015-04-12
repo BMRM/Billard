@@ -10,28 +10,28 @@ public class Ball
 
 	static BigDecimal dtChocBox(Ball b, BigDecimal dt)
     {
-        BigDecimal t = dt;
+        BigDecimal t = dt.add(BigDecimal.ONE);
         BigDecimal tmp = BigDecimal.ONE.negate();
 
         if (b.v.x != 0)
         {
             tmp = new BigDecimal((b.r - b.p.x) / b.v.x).setScale(Box.s, Box.r);
-            if (tmp.compareTo(BigDecimal.ZERO) > 0 && tmp.compareTo(t) <= 0)
+            if (tmp.compareTo(BigDecimal.ZERO) > 0 && tmp.compareTo(t.min(dt)) <= 0)
                 t = tmp;
             tmp = new BigDecimal((Box.length - b.r - b.p.x) / b.v.x).setScale(Box.s, Box.r);
-            if (tmp.compareTo(BigDecimal.ZERO) > 0 && tmp.compareTo(t) <= 0)
+            if (tmp.compareTo(BigDecimal.ZERO) > 0 && tmp.compareTo(t.min(dt)) <= 0)
                 t = tmp;
         }
         if (b.v.y != 0)
         {
             tmp = new BigDecimal((b.r - b.p.y) / b.v.y).setScale(Box.s, Box.r);
-            if (tmp.compareTo(BigDecimal.ZERO) > 0 && tmp.compareTo(t) <= 0)
+            if (tmp.compareTo(BigDecimal.ZERO) > 0 && tmp.compareTo(t.min(dt)) <= 0)
                 t = tmp;
             tmp = new BigDecimal((Box.width - b.r - b.p.y) / b.v.y).setScale(Box.s, Box.r);
-            if (tmp.compareTo(BigDecimal.ZERO) > 0 && tmp.compareTo(t) <= 0)
+            if (tmp.compareTo(BigDecimal.ZERO) > 0 && tmp.compareTo(t.min(dt)) <= 0)
                 t = tmp;
         }
-        if (t.compareTo(dt) < 0) // a prendre en compte ==
+        if (t.compareTo(dt) <= 0) // a prendre en compte ==
             return t;
         return BigDecimal.ONE.negate();
     }

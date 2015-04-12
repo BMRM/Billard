@@ -5,12 +5,15 @@ import java.math.RoundingMode;
 public class Box
 {
     static double       dt = 0.05;
+    static double       rayon = 0.03;
 	static double		width = 1.27;
 	static double		length = 2.54;
-    static int          s = 5;
+    static int          s = 8;
     static RoundingMode r = RoundingMode.HALF_UP;
     static MathContext  p = new MathContext(s, r);
     static int          nbChoc = 0;
+    static double       vmoy = 0;
+    static Ball         ballFocus;
 
     int     nbBalls;
 	Ball	balls[];
@@ -23,9 +26,11 @@ public class Box
         for (int i = 0; i < nbBalls; i++)
         {
             box.balls[i] = new Ball();
-            box.balls[i].r = 0.03;
+            box.balls[i].id = i;
+            box.balls[i].r = rayon;
             box.balls[i].m = 1;
         }
+        ballFocus = box.balls[0];
         posTriangle(box.balls, Billard.k);
     }
 
@@ -99,12 +104,18 @@ public class Box
 	{
 		b.p.x += dt * b.v.x;
 		b.p.y += dt * b.v.y;
+        b.r = Box.rayon;
 	}
 
 	static void evolve(Ball[] balls, int n, double dt)
 	{
+        vmoy = 0;
 		for (int i = 0; i < n; i++)
-			evolve(balls[i], dt);
+        {
+            evolve(balls[i], dt);
+            vmoy += balls[i].v.m;
+        }
+        vmoy = vmoy / n;
 	}
 
 	static void posLine(Ball [] balls, int n)
@@ -123,7 +134,7 @@ public class Box
 		int b = 0;
 		int n = (k * (k+1)/2) + 1;
 		balls[n - 1].p.x = length/3;
-		balls[n - 1].p.y = width/2;
+		balls[n - 1].p.y = width/2 + 0.03;
         balls[n - 1].v.x = 1;
         balls[n - 1].v.y = 0;
         Vector.formePol(balls[n - 1].v);
