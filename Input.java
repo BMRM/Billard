@@ -1,6 +1,7 @@
 public class Input
 {
     static boolean  kb = false;
+    static boolean  queue = false;
     static String   buffer = "";
     static int      out;
 
@@ -25,7 +26,24 @@ public class Input
             else if (key > 0)
                 buffer += key;
         }
+        queuing(Box.ballFocus);
 	}
+	
+	static void queuing(Ball ball)
+	{
+		if(queue && EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 3)
+		{
+			ball.v.x = (ball.p.x * Window.scale - EcranGraphique.getMouseX()) / Window.scale;
+			ball.v.y = -(-ball.p.y * Window.scale + Window.height - Window.sizeBoard - EcranGraphique.getMouseY()) / Window.scale;
+			Vector.formePol(ball.v);
+			queue = false;
+			Box.run = true;
+			
+		}
+	}
+	
+	
+	
 }
 
 

@@ -14,10 +14,12 @@ public class Box
     static int          nbChoc = 0;
     static double       vmoy = 0;
     static Ball         ballFocus;
-
+    static boolean 		run = false;
+    static double		friction = 0.01;
+    
     int     nbBalls;
 	Ball	balls[];
-	boolean run = false;
+	
 
 	static void     make(Box box, int nbBalls)
 	{
@@ -30,13 +32,13 @@ public class Box
             box.balls[i].r = rayon;
             box.balls[i].m = 1;
         }
-        ballFocus = box.balls[0];
+        ballFocus = box.balls[nbBalls - 1];
         posTriangle(box.balls, Billard.k);
     }
 
     static void     update(Box box)
     {
-        if (box.run)
+        if (run)
         {
             double t = 0;
             while (t < Box.dt)
@@ -104,7 +106,10 @@ public class Box
 	{
 		b.p.x += dt * b.v.x;
 		b.p.y += dt * b.v.y;
+		b.v.x *= 1 - friction;
+		b.v.y *= 1 - friction; 
         b.r = Box.rayon;
+        Vector.formePol(b.v);
 	}
 
 	static void evolve(Ball[] balls, int n, double dt)
@@ -115,7 +120,6 @@ public class Box
             evolve(balls[i], dt);
             vmoy += balls[i].v.m;
         }
-        vmoy = vmoy / n;
 	}
 
 	static void posLine(Ball [] balls, int n)
@@ -125,6 +129,8 @@ public class Box
 		{
 			balls[i].p.x = 0.1 + k * i;
 			balls[i].p.y = width / 2;
+			balls[i].v.x = Math.random() - 0.5;
+	        balls[i].v.y = Math.random() - 0.5;
 		}
 	}
 
@@ -134,7 +140,7 @@ public class Box
 		int b = 0;
 		int n = (k * (k+1)/2) + 1;
 		balls[n - 1].p.x = length/3;
-		balls[n - 1].p.y = width/2 + 0.03;
+		balls[n - 1].p.y = width/2;
         balls[n - 1].v.x = 1;
         balls[n - 1].v.y = 0;
         Vector.formePol(balls[n - 1].v);

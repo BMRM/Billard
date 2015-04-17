@@ -24,16 +24,16 @@ public class Billard
 					Box.posLine(box.balls, n);
 					break;
 				case 2 :
-					box.run = (box.run == true) ? false : true;
+					Input.queue = true;
+					Box.run = false;
 					break;
 				case 3 :
-                    Input.kb = true;
-                    Input.out = 3;
+					Box.run = (Box.run == true) ? false : true;
 					break;
-                case 4 :
+				case 4 :
                     Input.kb = true;
                     Input.out = 4;
-                    break;
+					break;
                 case 5 :
                     Input.kb = true;
                     Input.out = 5;
@@ -47,6 +47,14 @@ public class Billard
                     Input.out = 7;
                     break;
                 case 8 :
+                    Input.kb = true;
+                    Input.out = 8;
+                    break;
+                case 9 :
+                    Input.kb = true;
+                    Input.out = 9;
+					break;
+                case 10 :
                     run = false;
 					break;
 				default :

@@ -41,6 +41,11 @@ public class Window
         EcranGraphique.setColor(0, 0, 0);
         EcranGraphique.drawString(10, 80, 3, "> " + Input.buffer);
     }
+    
+    static void renderQueue(RenderBall rB)
+	{
+		EcranGraphique.drawLine(rB.x, rB.y, EcranGraphique.getMouseX(), EcranGraphique.getMouseY());
+	}
 
 	static void render(Window win, Box box)
 	{
@@ -48,8 +53,11 @@ public class Window
 		Menu.render(win.menu);
         Board.render(win.board);
 		RenderBall.render(win.renderBalls, box.balls, win.nbBalls);
+		if(Input.queue)
+			renderQueue(win.renderBalls[Box.ballFocus.id]);
         if (Input.kb)
             renderInput();
+        
         EcranGraphique.flush();
 	}
 }
