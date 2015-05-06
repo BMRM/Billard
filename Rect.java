@@ -1,9 +1,18 @@
+/**
+ * \file Rect.java
+ * \brief Gestion des formes rectangulaires
+ * \author Romain Mekarni
+ */
+
+ /**
+ * \brief Classe représentant un rectangle soit sa taille et sa position
+ */
 public class Rect
 {
-	int x;
-	int y;
-	int w;
-	int h;
+	int x;	///<Position x
+	int y;	///<Position y
+	int w;	///<Longueur
+	int h;	///<Largeur
 /**
  * Cree un rectangle avec des dimensions donnees
  * @param x
@@ -11,7 +20,7 @@ public class Rect
  * @param w
  * @param h
  * @return
- */
+ */	
 	static Rect make(int x, int y, int w, int h)
 	{
 		Rect rect = new Rect();
@@ -30,7 +39,7 @@ public class Rect
 		EcranGraphique.fillRect(rect.x, rect.y, rect.w, rect.h);
 	}
 /**
- * Verifie si le curseur de la souris se situe dans un rectangle
+ * Verifie si le point (x,y) est dans le rectangle rect
  * @param rect
  * @param x
  * @param y

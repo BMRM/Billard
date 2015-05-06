@@ -5,31 +5,28 @@ public class Billard
 	public static void main(String[] args)
 	{
 		int n = (k * (k + 1) / 2) + 1;
-		Box box = new Box();
-		Window win = new Window();
 
-		Box.make(box, n);
-		Window.make(win, n);
+		Box box = Box.make(box, n);
+		Window win = Window.make(win, n);
 
         long    elapsed = 0;
 		boolean run = true;
+		int		menu = 0;
 		while (run)
 		{
-			switch (Menu.update(win.menu, box))
+			menu = Menu.update(win.menu, box);
+			if (menu == 0)
+				Box.posTriangle(box.balls, k);
+			else if (menu == 1)
+				Box.posLine(box.balls, n);
+			else if (menu == 2)
 			{
-				case 0 :
-					Box.posTriangle(box.balls, k);
-					break;
-				case 1 :
-					Box.posLine(box.balls, n);
-					break;
-				case 2 :
-					Input.queue = true;
-					Box.run = false;
-					break;
-				case 3 :
-					Box.run = (Box.run == true) ? false : true;
-					break;
+				Input.queue = true;
+				Box.run = false;
+			}
+			else if (menu == 3)
+				Box.run = (Box.run == true) ? false : true;
+			else if (menu == 10)
 				case 4 :
                     Input.kb = true;
                     Input.out = 4;

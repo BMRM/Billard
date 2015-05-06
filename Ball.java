@@ -1,9 +1,13 @@
+/**
+ * \file Ball.java
+ * \brief Représentation d'une boule et interaction avec les autres objets
+ * \author Romain Mekarni, Baptiste Minervini
+ */
+
 import java.math.BigDecimal;
 
 /**
- * Gestion des Boules
- * @author baptiste
- *
+ * \brief Gestion des Boules
  */
 public class Ball
 {
