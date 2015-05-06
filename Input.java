@@ -4,7 +4,9 @@ public class Input
     static boolean  queue = false;
     static String   buffer = "";
     static int      out;
-
+/**
+ * Associe une touche du clavier a une action donnee
+ */
 	static void update()
 	{
         if (kb)
@@ -28,9 +30,15 @@ public class Input
         }
         queuing(Box.ballFocus);
 	}
-	
+/**
+ * Determine la nouvelle direction et la nouvelle intensite d'une boule determinee par un tir manuel	
+ * @param ball Boule ciblee par le tir
+ */
 	static void queuing(Ball ball)
 	{
+		if(queue && EcranGraphique.getMouseButton() == 2)
+			queue = false;
+
 		if(queue && EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 3)
 		{
 			ball.v.x = (ball.p.x * Window.scale - EcranGraphique.getMouseX()) / Window.scale;

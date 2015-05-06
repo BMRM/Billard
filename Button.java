@@ -8,7 +8,13 @@ public class Button
 	Rect	size;
 	Rect	border;
     int     state = 0;
-
+/**
+ * Construit un bouton
+ * @param button
+ * @param type Type du bouton
+ * @param title Type du bouton
+ * @param size Dimension du bouton
+ */
 	static void make(Button button, int type, String title[], Rect size)
 	{
         button.type = type;
@@ -21,7 +27,12 @@ public class Button
         button.design[1][1] = button.design[0][0];
 		button.border = size;
 	}
-
+/**
+ * Determine l'etat d'un bouton
+ * @param b
+ * @param box
+ * @return Retourne l'etat du bouton
+ */
 	static int update(Button b, Box box)
 	{
         if (b.state == 1
@@ -40,7 +51,10 @@ public class Button
         }
         return -1;
 	}
-
+/**
+ * Affiche un bouton
+ * @param b
+ */
 	static void render(Button b)
 	{
 		Color.setEcranGraphique(b.design[b.state][0]);

@@ -1,13 +1,25 @@
 import java.math.BigDecimal;
 
+/**
+ * Gestion des Boules
+ * @author baptiste
+ *
+ */
 public class Ball
 {
-	int		id;
-	double	r;
-	Vector	p = new Vector();
-	Vector	v = new Vector();
-	double	m;
-
+	
+	int		id; ///<Identifiant unique d'une boule 
+	double	r; 	///<Rayon
+	Vector	p = new Vector(); ///<Vecteur position
+	Vector	v = new Vector(); ///<Vecteur vitesse
+	double	m; 
+	
+/**
+ * Determine l'instant ou aura lieu le choc entre 1 boule et un mur, si il existe
+ * @param b Boule concernee
+ * @param dt Pas de temps
+ * @return L'instant du choc (-1 si absence de choc)
+ */
 	static BigDecimal dtChocBox(Ball b, BigDecimal dt)
     {
         BigDecimal t = dt.add(BigDecimal.ONE);
@@ -35,7 +47,11 @@ public class Ball
             return t;
         return BigDecimal.ONE.negate();
     }
-
+	
+/**
+ * Attribue les nouveaux angles aux Boules apres un choc Boule/Mur
+ * @param b Boule concernee
+ */
 	static void chocBox(Ball b)
     {
         if (new BigDecimal(b.p.x - b.r).setScale(Box.s, Box.r).compareTo(BigDecimal.ZERO) == 0)
@@ -48,7 +64,14 @@ public class Ball
             b.v.y *= -1;
         Vector.formePol(b.v);
     }
-
+	
+/**
+ * Determine l'instant ou aura lieu le choc entre 2 boules, si il existe
+ * @param b1 Boule 1
+ * @param b2 Boule 2
+ * @param dt Pas de temps impose par Box
+ * @return L'instant du choc (-1 si absence de choc)
+ */	
     static BigDecimal dtChocBalls(Ball b1, Ball b2, BigDecimal dt)
     {
         // Choc equation : a.dt.dt + b.dt + c = 0
@@ -69,7 +92,12 @@ public class Ball
             return t;
         return BigDecimal.ONE.negate();
     }
-
+    
+/**
+ * Attribue les nouveaux angles aux Boules apres un choc Boule/Boule
+ * @param b1 Boule 1
+ * @param b2 Boule 2
+ */  
 	static void chocBalls(Ball b1, Ball b2)
     {
 		if (b1.v.m < b2.v.m)

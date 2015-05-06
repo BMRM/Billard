@@ -1,7 +1,11 @@
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-
+/**
+ * Moteur physique
+ * @author baptiste
+ *
+ */
 public class Box
 {
     static double       dt = 0.05;
@@ -35,7 +39,10 @@ public class Box
         ballFocus = box.balls[nbBalls - 1];
         posTriangle(box.balls, Billard.k);
     }
-
+/**
+ * Fait evoluer le systeme physique de Box.dt
+ * @param box Instance du moteur physique
+ */
     static void     update(Box box)
     {
         if (run)
@@ -45,7 +52,14 @@ public class Box
                 t += update(box, Box.dt);
         }
     }
-
+    
+/**
+ * Fait evoluer le systeme physique jusque au prochain etat
+ * @param box
+ * @param dt
+ * @return
+ */
+    
 	static double	update(Box box, double dt)
 	{
 		BigDecimal	t = new BigDecimal(dt, p);
@@ -81,7 +95,10 @@ public class Box
 		pollEvent(stack);
 		return t.doubleValue();
 	}
-
+/**
+ * Applique les evenements trouve dans un changement d'etats
+ * @param stack Pile des evenements
+ */
 	static void pollEvent(Stack stack)
 	{
 		while (!Stack.isEmpty(stack))
@@ -101,7 +118,11 @@ public class Box
             nbChoc++;
 		}
 	}
-
+/**
+ * Deplace la boule b d'un temps dt
+ * @param b
+ * @param dt
+ */
 	static void evolve(Ball b, double dt)
 	{
 		b.p.x += dt * b.v.x;
@@ -111,7 +132,12 @@ public class Box
         b.r = Box.rayon;
         Vector.formePol(b.v);
 	}
-
+/**
+ * Deplace les boules d'un temps dt
+ * @param balls
+ * @param n
+ * @param dt
+ */
 	static void evolve(Ball[] balls, int n, double dt)
 	{
         vmoy = 0;
@@ -121,7 +147,11 @@ public class Box
             vmoy += balls[i].v.m;
         }
 	}
-
+/**
+ * Positionne les boules en ligne
+ * @param balls
+ * @param n
+ */
 	static void posLine(Ball [] balls, int n)
 	{
 		double k = length / ( n + 0.01 );
@@ -133,7 +163,11 @@ public class Box
 	        balls[i].v.y = Math.random() - 0.5;
 		}
 	}
-
+/**
+ * Positionne les boules en triangle
+ * @param balls
+ * @param k
+ */
 	static void posTriangle(Ball [] balls , int k)
 	{
 		double decal = 0;

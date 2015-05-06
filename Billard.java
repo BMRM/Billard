@@ -62,6 +62,7 @@ public class Billard
 			}
             Input.update();
             Box.update(box);
+            
             if (Window.fps > 0)
 			    EcranGraphique.wait((int)Math.max(0, 1000 / (double)Window.fps - (System.nanoTime() - elapsed) / 1000000));
             Window.fps = (int)(1000 / (double)((System.nanoTime() - elapsed) / 1000000));

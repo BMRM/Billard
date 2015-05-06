@@ -18,7 +18,11 @@ public class Menu
 
 	Button	buttons[];
 	Rect	size;
-
+/**
+ * Cree un menu
+ * @param menu
+ * @param sizeMenu
+ */
 	static void make(Menu menu, Rect sizeMenu)
 	{
 		menu.buttons = new Button[nbButtons];
@@ -31,7 +35,12 @@ public class Menu
 			Button.make(menu.buttons[i], type[i], title[i], size);
 		}
 	}
-
+/**
+ * Actualise les donnees affichees sur les bouton du menu 
+ * @param menu
+ * @param box
+ * @return
+ */
 	static int update(Menu menu, Box box)
 	{
         Box.dt = Double.valueOf(menu.buttons[4].title[1]);
@@ -48,7 +57,10 @@ public class Menu
 		}
 		return -1;
 	}
-
+/**
+ * Affiche le menu
+ * @param menu
+ */
 	static void render(Menu menu)
 	{
 		for (int i = 0; i < nbButtons; i++)
