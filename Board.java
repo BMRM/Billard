@@ -1,13 +1,28 @@
+/**
+ * \file Board.java
+ * \brief Bandeau de mesures du système physique
+ * \author Romain Mekarni
+ */
+
 import java.math.BigDecimal;
 
+/**
+ * \class Indicator
+ * \brief Mesure numérique d'une grandeur physique du système physique
+ * \author Romain Mekarni
+ */
 class Indicator
 {
     String  name;
     String  unite;
     double  value;
     int     precision = 2;
-    Rect    size;
+    Rect    size; ///< Position dans le bandeau
 
+    /**
+     * \brief Constructor
+     * @author Romain Mekarni
+     */
     static Indicator make(String name, String unite, int precision, Rect size)
     {
         Indicator i = new Indicator();
@@ -19,14 +34,25 @@ class Indicator
     }
 }
 
+/**
+ * \class Graph
+ * \brief Mesure graphique d'une grandeur physique du système physique
+ * \author Romain Mekarni
+ */
 class Graph
 {
-    Indicator   indicator;
-    int         scale;
-    double      moy = 0;
-    Rect        size;
-    int[][]     graph;
+    Indicator   indicator;///<Grandeur physique mesurée
+    int         scale;///<Echelle d'affichage
+    double      moy = 0;///<Valeur moyenne
+    Rect        size;///<Taille et zone d'affichage
+    int[][]     graph;///<Tableau d'entier représentant le graphique
 
+    /**
+     * \brief Constructeur
+     * @param scale Echelle
+     * @param size Taille et zone d'affichage
+     * @author Romain Mekarni
+     */
     static Graph make(String name, String unite, int precision, int scale, Rect size)
     {
         Graph g = new Graph();
@@ -43,6 +69,11 @@ class Graph
     }
 }
 
+/**
+ * \class Board
+ * \brief Bandeau d'affichage des grandeurs physique du système
+ * \author Romain Mekarni
+ */
 public class Board
 {
     static int nb;

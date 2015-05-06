@@ -1,68 +1,78 @@
+/**
+ * \file Box.java
+ * \brief Moteur physique - Simulation du Billard
+ * \author Baptiste Minervini, Romain Mekarni
+ */
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+
 /**
- * Moteur physique
- * @author baptiste
- *
+ * \class Box
+ * \brief Moteur physique
+ * @author Baptiste Minervini, Romain Mekarni
  */
 public class Box
 {
-    static double       dt = 0.05;
-    static double       rayon = 0.03;
-	static double		width = 1.27;
-	static double		length = 2.54;
-    static int          s = 8;
-    static RoundingMode r = RoundingMode.HALF_UP;
-    static MathContext  p = new MathContext(s, r);
-    static int          nbChoc = 0;
-    static double       vmoy = 0;
-    static Ball         ballFocus;
-    static boolean 		run = false;
-    static double		friction = 0.01;
-    
-    int     nbBalls;
-	Ball	balls[];
-	
+    double          dt = 0.05; ///<Pas de temps
+    double          rayon = 0.03; ///<Rayon des boules
+    double          width = 1.27; ///<Largeur du billard
+    double          length = 2.54; ///<Longueur du billard
+    int             s = 8; ///<Précision des calculs physiques
+    RoundingMode    r = RoundingMode.HALF_UP; ///<Arrondissement à 1 si 0.5
+    MathContext     p = new MathContext(s, r); ///<Contexte mathématique d'arrondissement
+    int             nbChoc = 0;///<Compteur nombre de choc par dt
+    double          vmoy = 0;///<Compteur vitesse moyenne du système
+    Ball            ballFocus;///<Boule ciblée pour interaction
+    boolean         run = false;///<Flag d'exécution du système physique
+    double          friction = 0.01;
+    int             baseBalls = 5;///<Taille du triangle de boules
 
-	static void     make(Box box, int nbBalls)
+    int     nbBalls;
+    Ball    balls[];
+
+    /**
+     * \brief Constructeur de Box
+     * @author Baptiste Minervini, Romain Mekarni
+     */
+	static Box make(int nbBalls)
 	{
+        Box box = new Box();
         box.nbBalls = nbBalls;
 		box.balls = new Ball[nbBalls];
         for (int i = 0; i < nbBalls; i++)
         {
             box.balls[i] = new Ball();
             box.balls[i].id = i;
-            box.balls[i].r = rayon;
+            box.balls[i].r = box.rayon;
             box.balls[i].m = 1;
         }
-        ballFocus = box.balls[nbBalls - 1];
-        posTriangle(box.balls, Billard.k);
+        box.ballFocus = box.balls[nbBalls - 1];
+        posTriangle(box);
     }
 /**
- * Fait evoluer le systeme physique de Box.dt
- * @param box Instance du moteur physique
+ * \brief Fait evoluer le systeme physique de Box.dt
+ * @author Romain Mekarni
  */
-    static void     update(Box box)
+    static void update(Box box)
     {
-        if (run)
+        if (box.run)
         {
             double t = 0;
-            while (t < Box.dt)
-                t += update(box, Box.dt);
+            while (t < box.dt)
+                t += update(box, box.dt - t);
         }
     }
-    
+
 /**
- * Fait evoluer le systeme physique jusque au prochain etat
- * @param box
- * @param dt
- * @return
+ * \brief évolue jusqu'au prochain état avant dt
+ * @return temps t du prochain état du système
+ * @author Romain Mekarni
  */
-    
 	static double	update(Box box, double dt)
 	{
-		BigDecimal	t = new BigDecimal(dt, p);
+		BigDecimal	t = new BigDecimal(dt, box.p);
 		BigDecimal	tmp;
 		Stack		stack = new Stack();
 
@@ -73,16 +83,16 @@ public class Box
 			for (int j = i + 1; j < box.nbBalls; j++)
 			{
                 bj = box.balls[j];
-				tmp = Ball.dtChocBalls(bi, bj, t);
+				tmp = Ball.dtChocBalls(box, bi, bj, t); // Calcul du temps tmp du prochain choc entre bi et bj
 				if (tmp.compareTo(BigDecimal.ONE.negate()) != 0 && tmp.compareTo(t) <= 0)
 				{
-					if (tmp.compareTo(t) != 0)
-						Stack.clear(stack);
-					Stack.push(stack, 0, bi, bj);
+					if (tmp.compareTo(t) != 0) // Si tmp < t, on change d'état du système
+						Stack.clear(stack); // Donc on réinitialise la pile d'évènement
+					Stack.push(stack, 0, bi, bj); // On ajoute l'évènement (le choc) pour une prise en compte plus tard
 					t = tmp;
 				}
 			}
-			tmp = Ball.dtChocBox(bi, t);
+			tmp = Ball.dtChocBox(box, bi, t); // Calcul du temps tmp du prochain choc entre bi et les murs du billard
 			if (tmp.compareTo(BigDecimal.ONE.negate()) != 0 && tmp.compareTo(t) <= 0)
 			{
 				if (tmp.compareTo(t) != 0)
@@ -91,15 +101,20 @@ public class Box
 				t = tmp;
 			}
 		}
-		evolve(box.balls, box.nbBalls, t.doubleValue());
-		pollEvent(stack);
+        box.vmoy = 0;
+		for (int i = 0; i < box.nbBalls; i++)
+        { // On fait évoluer le système vers l'état de choc le plus proche
+            evolve(box, box.balls[i], t.doubleValue());
+            box.vmoy += box.balls[i].v.m;
+        }
+		pollEvent(box, stack); // Une fois les boules placées, on peut appliquer tous les chocs mémorisés
 		return t.doubleValue();
 	}
 /**
- * Applique les evenements trouve dans un changement d'etats
- * @param stack Pile des evenements
+ * \brief Applique les événements mémorisés dans un changement d'état
+ * @author Romain Mekarni
  */
-	static void pollEvent(Stack stack)
+	static void pollEvent(Box box, Stack stack)
 	{
 		while (!Stack.isEmpty(stack))
 		{
@@ -109,87 +124,68 @@ public class Box
 					Ball.chocBalls(stack.first.event.b1, stack.first.event.b2);
 					break;
 				case 1 :
-					Ball.chocBox(stack.first.event.b1);
+					Ball.chocBox(box, stack.first.event.b1);
 					break;
 				default :
 					break;
 			}
             Stack.pull(stack);
-            nbChoc++;
+            box.nbChoc++;
 		}
 	}
 /**
- * Deplace la boule b d'un temps dt
- * @param b
- * @param dt
+ * \brief Déplace la boule b d'un temps dt avec une friction
+ * @author Baptiste Minervini, Romain Mekarni
  */
-	static void evolve(Ball b, double dt)
+	static void evolve(Box box, Ball b, double dt)
 	{
 		b.p.x += dt * b.v.x;
 		b.p.y += dt * b.v.y;
-		b.v.x *= 1 - friction;
-		b.v.y *= 1 - friction; 
-        b.r = Box.rayon;
+		b.v.x *= 1 - box.friction;
+		b.v.y *= 1 - box.friction;
+        b.r = box.rayon;
         Vector.formePol(b.v);
 	}
 /**
- * Deplace les boules d'un temps dt
- * @param balls
- * @param n
- * @param dt
+ * \brief Positionne les boules en ligne
+ * @author Baptiste Minervini
  */
-	static void evolve(Ball[] balls, int n, double dt)
+	static void posLine(Box box)
 	{
-        vmoy = 0;
-		for (int i = 0; i < n; i++)
-        {
-            evolve(balls[i], dt);
-            vmoy += balls[i].v.m;
-        }
-	}
-/**
- * Positionne les boules en ligne
- * @param balls
- * @param n
- */
-	static void posLine(Ball [] balls, int n)
-	{
-		double k = length / ( n + 0.01 );
-		for (int i = 0; i < n; i++)
+		double k = box.length / (box.nbBalls + 0.01 );
+		for (int i = 0; i < box.nbBalls; i++)
 		{
-			balls[i].p.x = 0.1 + k * i;
-			balls[i].p.y = width / 2;
-			balls[i].v.x = Math.random() - 0.5;
-	        balls[i].v.y = Math.random() - 0.5;
+			box.balls[i].p.x = 0.1 + k * i;
+			box.balls[i].p.y = box.width / 2;
+			box.balls[i].v.x = Math.random() - 0.5;
+	        box.balls[i].v.y = Math.random() - 0.5;
 		}
 	}
 /**
- * Positionne les boules en triangle
- * @param balls
- * @param k
+ * \brief Positionne les boules en triangle
+ * @author Baptiste Minervini
  */
-	static void posTriangle(Ball [] balls , int k)
+	static void posTriangle(Box box)
 	{
 		double decal = 0;
 		int b = 0;
-		int n = (k * (k+1)/2) + 1;
-		balls[n - 1].p.x = length/3;
-		balls[n - 1].p.y = width/2;
-        balls[n - 1].v.x = 1;
-        balls[n - 1].v.y = 0;
-        Vector.formePol(balls[n - 1].v);
-		for (int i = 1; i <= k; i++)
+		box.balls[box.nbBalls - 1].p.x = box.length/3;
+		box.balls[box.nbBalls - 1].p.y = box.width/2;
+        box.balls[box.nbBalls - 1].v.x = 1;
+        box.balls[box.nbBalls - 1].v.y = 0;
+        Vector.formePol(box.balls[box.nbBalls - 1].v);
+		for (int i = 1; i <= box.baseBalls; i++)
 		{
 			for (int j = 0; j <= i - 1; j++)
 			{
-				balls[b].p.x = (2 * length / 3) + decal;
-				balls[b].p.y = width / 2 + (2 * (balls[b].r + 0.003) * j) - ((decal)/2);
-                balls[b].v.x = 0;
-                balls[b].v.y = 0;
-                Vector.formePol(balls[b].v);
+				box.balls[b].p.x = (2 * box.length / 3) + decal;
+				box.balls[b].p.y = box.width / 2 + (2 * (box.balls[b].r + 0.003) * j) - ((decal)/2);
+                box.balls[b].v.x = 0;
+                box.balls[b].v.y = 0;
+                Vector.formePol(box.balls[b].v);
 				b++;
 			}
-			decal += (2 * balls[i].r);
+			decal += (2 * box.balls[i].r);
 		}
 	}
 }
