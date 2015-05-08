@@ -1,71 +1,76 @@
+/**
+ * \file Button.java
+ * \brief Boutton du Menu
+ * \authors Baptiste Minervini
+ * \authors Romain Mekarni
+ */
+
+/**
+ * \class Button
+ * \brief Boutton du Menu
+ * \authors Baptiste Minervini
+ * \authors Romain Mekarni
+ */
 public class Button
 {
-	static int b = 3;
-
-    int     type = 0;
-	String	title[];
-    Color   design[][];
-	Rect	size;
-	Rect	border;
-    int     state = 0;
+	int b = 3;///<Taille bordure
+	String	title[];///<Libellés bouton
+    Color   design[];///<Couleurs du boutons
+	Rect	size;///<Taille et position
+	Rect	border;///<Format de la bordure
+    int     state = 0;///<Etats du bouton
 /**
- * Construit un bouton
- * @param button
- * @param type Type du bouton
- * @param title Type du bouton
- * @param size Dimension du bouton
+ * \brief Constructeur
+ * \param titles Tableau de chaines contenant les libellés du bouton
+ * \param size Taille et position du bouton
+ * \authors Baptiste Minervini
+ * \authors Romain Mekarni
  */
-	static void make(Button button, int type, String title[], Rect size)
+	static Button make(String[] title, Rect size)
 	{
-        button.type = type;
+        Button button = new Button();
 		button.title = title;
-		button.size = Rect.make(size.x + b, size.y + b, size.w - 2 * b, size.h - 2 * b);
-        button.design = new Color[2][2];
-        button.design[0][0] = Color.make(60, 60, 60);
-        button.design[0][1] = Color.make(80, 80, 80);
-        button.design[1][0] = button.design[0][1];
-        button.design[1][1] = button.design[0][0];
+		button.size = Rect.make(size.x + button.b, size.y + button.b, size.w - 2 * button.b, size.h - 2 * button.b);
+        button.design = new Color[2];
+        button.design[0] = Color.make(60, 60, 60);
+        button.design[1] = Color.make(80, 80, 80);
 		button.border = size;
+        return button;
 	}
 /**
- * Determine l'etat d'un bouton
- * @param b
- * @param box
- * @return Retourne l'etat du bouton
+ * \Détermine l'état du bouton
+ * \return Clique enfoncé sur bouton = true
+ * \authors Baptiste Minervini
+ * \authors Romain Mekarni
  */
-	static int update(Button b, Box box)
+	static boolean update(Button b)
 	{
         if (b.state == 1
         && EcranGraphique.getMouseState() == 0)
-        {
             b.state = 0;
-            return b.state;
-        }
 		if (Rect.isIn(b.size, EcranGraphique.getMouseX(), EcranGraphique.getMouseY())
 		&& EcranGraphique.getMouseState() == 1
 		&& EcranGraphique.getMouseButton() == 1
 		&& b.state == 0)
         {
 			b.state = 1;
-            return b.state;
+            return true;
         }
-        return -1;
+        return false;
 	}
 /**
- * Affiche un bouton
- * @param b
+ * \brief Rendu dans Window
+ * \authors Baptiste Minervini
+ * \authors Romain Mekarni
  */
 	static void render(Button b)
 	{
-		Color.setEcranGraphique(b.design[b.state][0]);
+		Color.set(b.design[0]);
 		Rect.fill(b.border);
-		Color.setEcranGraphique(b.design[b.state][1]);
+		Color.set(b.design[1]);
 		Rect.fill(b.size);
 		EcranGraphique.setColor(255, 255, 255);
-        if (b.type == 2)
-		    EcranGraphique.drawString(b.size.x + 10, b.size.y + b.size.h - 10, 3, b.title[0] + b.title[1]);
-        else
-		    EcranGraphique.drawString(b.size.x + 10, b.size.y + b.size.h - 10, 3, b.title[b.type * b.state]);
+		EcranGraphique.drawString(b.size.x + 10, b.size.y + b.size.h - 10, 3, b.title[0] + b.title[1]);
 	}
 }
 

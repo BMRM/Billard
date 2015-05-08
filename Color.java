@@ -1,24 +1,23 @@
 /**
  * \file Color.java
  * \brief Gestion des couleurs pour l'API EcranGraphique
- * \author Romain Mekarni, Baptiste Minervini
+ * \authors Baptiste Minervini
+ * \authors Romain Mekarni
  */
 
  /**
  * \brief Classe représentant une couleur
+ * \author Baptiste Minervini
  */
 public class Color
 {
 	int r; ///<Rouge
 	int v; ///<Vert
 	int b; ///<Bleu
-	
+
 /**
- * Créé une couleur de type RVB
- * @param r
- * @param v
- * @param b
- * @return
+ * \brief Constructeur
+ * \author Baptiste Minervini
  */
     static Color make(int r, int v, int b)
     {
@@ -28,10 +27,10 @@ public class Color
         c.b = b;
         return c;
     }
-	
+
 /**
- * Defini la couleur qu'utilisera l'API graphique
- * @param c
+ * \brief Paramètre la couleur de EcranGraphique
+ * \author Romain Mekarni
  */
     static void set(Color c)
     {

@@ -1,42 +1,60 @@
+/**
+ * \file Stack.java
+ * \brief Structure de données de type pile
+ * \author Romain Mekarni
+ */
+
+/**
+ * \class Event
+ * \brief Représente un évènement de type choc
+ * \author Romain Mekarni
+ */
 class Event
 {
-	int		type;
+	int		type;///<Type de choc; 0 boule/boule; 1 boule/mur
 	Ball	b1;
 	Ball	b2;
 }
 
+/**
+ * \class Item
+ * \brief Element de Stack qui contient un Event
+ * \author Romain Mekarni
+ */
 class Item
 {
-	Event	event;
-	Item	next = null;
+	Event	event;///<Evènement mémorisé
+	Item	next = null;///<Référence sur l'élément suivant de la pile
 }
 
+/**
+ * \class Stack
+ * \brief Conteneur de Item de type pile
+ * \author Romain Mekarni
+ */
 public class Stack
 {
-	Item	first = null;
-/**
- * Remplis la pile
- * @param stack
- * @param type
- * @param b1
- * @param b2
- * @return
- */
-	static Stack	push(Stack stack, int type, Ball b1, Ball b2)
+	Item	first = null;///<Premier élément de la pile
+
+    /**
+     * \brief Ajoute un élément à la pile
+     * \param type 0 pour un choc boule/boule et 1 pour boule/mur
+     * \author Romain Mekarni
+     */
+    static Stack	push(Stack stack, int type, Ball b1, Ball b2)
 	{
 		Item item = new Item();
-		item.event = new Event();
+		item.event = new Event();// Event contient l'évènement à mémoriser
         item.event.type = type;
         item.event.b1 = b1;
         item.event.b2 = b2;
-		item.next = stack.first;
-		stack.first = item;
+		item.next = stack.first;// On fait pointer le prochain élément sur le début de la pile
+		stack.first = item;// On fait pointer la pile sur ce nouvel élément
 		return stack;
 	}
 /**
- * Retire un evenement de la pile
- * @param stack
- * @return
+ * \brief Retire un élément
+ * \author Romain Mekarni
  */
 	static Stack	pull(Stack stack)
 	{
@@ -45,8 +63,8 @@ public class Stack
 		return stack;
 	}
 /**
- * Vide la pile
- * @param stack
+ * \brief Vide la pile
+ * \author Romain Mekarni
  */
     static void     clear(Stack stack)
     {
@@ -54,18 +72,15 @@ public class Stack
             pull(stack);
     }
 /**
- * Verifie si la pile est pleine
- * @param stack
- * @return
+ * \brief Vérifie si la pile est pleine
  */
 	static boolean	isEmpty(Stack stack)
 	{
 		return (stack.first == null);
 	}
 /**
- * Renvoie la taille de la pile
- * @param stack
- * @return
+ * \brief Renvoie la taille de la pile
+ * \author Romain Mekarni
  */
     static int  size(Stack stack)
     {

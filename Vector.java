@@ -1,23 +1,31 @@
+/**
+ * \file Vector.java
+ * \brief Manipulation des vecteurs mathématiques pour la physique
+ * \author Romain Mekarni
+ */
+
+/**
+ * \class Vector
+ * \brief Manipulation des vecteurs mathématiques
+ * \author Romain Mekarni
+ */
 public class Vector
 {
-	double x;
-    double y;
-	double m;
-	double a;
+	double x;///<Position x
+    double y;///<Position y
+	double m;///<Module
+	double a;///<Angle en radian
 /**
- * Calcule le module d'un vecteur
- * @param v
- * @return
+ * \brief Calcule le module d'un vecteur
+ * \author Romain Mekarni
  */
 	static double module(Vector v)
     {
         return Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2));
     }
 /**
- * Calcule atan
- * @param y
- * @param x
- * @return
+ * \brief Calcule atan
+ * \author Romain Mekarni
  */
     static double atan(double y, double x)
     {
@@ -37,9 +45,8 @@ public class Vector
         return a;
     }
 /**
- * Passe les coordonnees d'un vecteur en forme polaire
- * @param v
- * @return
+ * \brief Conversion coordonnées cartésiennes -> polaires
+ * \author Romain Mekarni
  */
 	static Vector formePol(Vector v)
 	{
@@ -48,11 +55,9 @@ public class Vector
 		return v;
 	}
 /**
- * Passe les coordonnees d'un vecteur en forme cartesienne
- * @param v
- * @return
+ * \brief Conversion coordonnées polaires -> cartésiennes
+ * \author Romain Mekarni
  */
-
 	static Vector formeCart(Vector v)
 	{
 		v.x = v.m * Math.cos(v.a);
@@ -60,10 +65,8 @@ public class Vector
 		return v;
 	}
 /**
- * Change la base d'un vecteur
- * @param v
- * @param alpha
- * @return
+ * \brief Change le vecteur de base
+ * \author Romain Mekarni
  */
     static Vector newBase(Vector v, double alpha)
     {
@@ -74,6 +77,10 @@ public class Vector
         return v;
     }
 
+    /**
+     * \brief Change le vecteur de base (retour vers initial)
+     * \author Romain Mekarni
+     */
     static Vector reverseBase(Vector v, double alpha)
     {
         double x1 = v.x;
@@ -83,8 +90,7 @@ public class Vector
         return v;
     }
 /**
- * Fonction d'affichage 
- * @param v
+ * \brief Dump vecteur
  */
     static void dump(Vector v)
     {

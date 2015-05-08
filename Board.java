@@ -5,6 +5,7 @@
  */
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * \class Indicator
@@ -21,7 +22,7 @@ class Indicator
 
     /**
      * \brief Constructor
-     * @author Romain Mekarni
+     * \author Romain Mekarni
      */
     static Indicator make(String name, String unite, int precision, Rect size)
     {
@@ -31,6 +32,16 @@ class Indicator
         i.size = size;
         i.precision = precision;
         return i;
+    }
+
+    /**
+     * \brief Rendu de l'indicateur dans Board
+     * \author Romain Mekarni
+     */
+    static void render(Indicator i)
+    {
+        EcranGraphique.setColor(255, 255, 255);
+        EcranGraphique.drawString(i.size.x, i.size.y, 3, i.name + new BigDecimal(i.value).setScale(i.precision, RoundingMode.HALF_UP).toString() + i.unite);
     }
 }
 
@@ -49,9 +60,9 @@ class Graph
 
     /**
      * \brief Constructeur
-     * @param scale Echelle
-     * @param size Taille et zone d'affichage
-     * @author Romain Mekarni
+     * \param scale Echelle
+     * \param size Taille et zone d'affichage
+     * \author Romain Mekarni
      */
     static Graph make(String name, String unite, int precision, int scale, Rect size)
     {
@@ -67,41 +78,11 @@ class Graph
         }
         return g;
     }
-}
 
-/**
- * \class Board
- * \brief Bandeau d'affichage des grandeurs physique du système
- * \author Romain Mekarni
- */
-public class Board
-{
-    static int nb;
-    static int height = 200;
-
-    Rect        size;
-    Indicator   indicators[];
-    Graph       graphs[];
-
-    static Board make(Rect size)
-    {
-        Board b = new Board();
-        b.size = size;
-        b.indicators = new Indicator[7];
-        b.indicators[0] = Indicator.make("Boule : ", "", 0, Rect.make(size.x + 550, size.y + 20, 50, 30));
-        b.indicators[1] = Indicator.make("Vitesse : ", " m/s", 2, Rect.make(size.x + 550, size.y + 50, 50, 30));
-        b.indicators[2] = Indicator.make("Angle : ", " degres", 0, Rect.make(size.x + 550, size.y + 80, 50, 30));
-        b.indicators[3] = Indicator.make("Position.x : ", " m", 2, Rect.make(size.x + 550, size.y + 110, 50, 30));
-        b.indicators[4] = Indicator.make("Position.y : ", " m", 2, Rect.make(size.x + 550, size.y + 140, 50, 30));
-        b.indicators[5] = Indicator.make("Rayon : ", " m", 2, Rect.make(size.x + 550, size.y + 170, 50, 30));
-        b.indicators[6] = Indicator.make("FPS : ", "", 0, Rect.make(size.x + 690, size.y + 20, 50, 30));
-        b.graphs = new Graph[2];
-        b.graphs[0] = Graph.make("Nombre de chocs : ", " par dt", 0, 10, Rect.make(size.x + 15, size.y + 10, 240, 150));
-        b.graphs[1] = Graph.make("Vitesse moyenne : ", " m/s", 2, 100, Rect.make(size.x + 280, size.y + 10, 240, 150));
-
-        return b;
-    }
-
+    /**
+     * \brief Rendu graphique dans Board
+     * \author Romain Mekarni
+     */
     static void render(Graph g)
     {
         g.moy = (g.moy + g.indicator.value) / (double)g.size.w;
@@ -127,36 +108,74 @@ public class Board
             EcranGraphique.setColor(255, 255, 255);
             EcranGraphique.drawPixel(g.size.x + g.size.w - 1, g.size.y + g.size.h - i);
         }
-        render(g.indicator);
+        Indicator.render(g.indicator);
     }
+}
 
-    static void render(Indicator i)
+/**
+ * \class Board
+ * \brief Bandeau d'affichage des grandeurs physique du système
+ * \author Romain Mekarni
+ */
+public class Board
+{
+    int         nbIndicators = 7;///<Nombre de Indicator dans le bandeau
+    int         nbGraphs = 2;///<Nombre de graphiques
+    Rect        size;///<Position et taille
+    Indicator   indicators[];///<Tableau de Indicator
+    Graph       graphs[];///<Tableau de Graph
+
+    /**
+     * \brief Constructeur
+     * \param size Taille et position du Board
+     * \author Romain Mekarni
+     */
+    static Board make(Rect size)
     {
-        EcranGraphique.setColor(255, 255, 255);
-        EcranGraphique.drawString(i.size.x, i.size.y, 3, i.name + new BigDecimal(i.value).setScale(i.precision, Box.r).toString() + i.unite);
+        Board b = new Board();
+        b.size = size;
+        b.indicators = new Indicator[b.nbIndicators];
+        b.indicators[0] = Indicator.make("Boule : ", "", 0, Rect.make(size.x + 550, size.y + 20, 50, 30));
+        b.indicators[1] = Indicator.make("Vitesse : ", " m/s", 2, Rect.make(size.x + 550, size.y + 50, 50, 30));
+        b.indicators[2] = Indicator.make("Angle : ", " degres", 0, Rect.make(size.x + 550, size.y + 80, 50, 30));
+        b.indicators[3] = Indicator.make("Position.x : ", " m", 2, Rect.make(size.x + 550, size.y + 110, 50, 30));
+        b.indicators[4] = Indicator.make("Position.y : ", " m", 2, Rect.make(size.x + 550, size.y + 140, 50, 30));
+        b.indicators[5] = Indicator.make("Rayon : ", " m", 2, Rect.make(size.x + 550, size.y + 170, 50, 30));
+        b.indicators[6] = Indicator.make("FPS : ", "", 0, Rect.make(size.x + 690, size.y + 20, 50, 30));
+        b.graphs = new Graph[b.nbGraphs];
+        b.graphs[0] = Graph.make("Nombre de chocs : ", " par dt", 0, 10, Rect.make(size.x + 15, size.y + 10, 240, 150));
+        b.graphs[1] = Graph.make("Vitesse moyenne : ", " m/s", 2, 100, Rect.make(size.x + 280, size.y + 10, 240, 150));
+        return b;
     }
 
+    /**
+     * \brief Mise à jour des informations du bandeau
+     * \author Romain Mekarni
+     */
+    static void update(Board b, Box box, Window win)
+    {
+        b.indicators[0].value = box.ballFocus.id;
+        b.indicators[1].value = box.ballFocus.v.m;
+        b.indicators[2].value = box.ballFocus.v.a * 180 / Math.PI;
+        b.indicators[3].value = box.ballFocus.p.x;
+        b.indicators[4].value = box.ballFocus.p.y;
+        b.indicators[5].value = box.ballFocus.r;
+        b.indicators[6].value = win.fps;
+        b.graphs[0].indicator.value = box.nbChoc;
+        box.nbChoc = 0;
+        b.graphs[1].indicator.value = box.vmoy;
+    }
+
+    /**
+     * \brief Rendu du bandeau dans Menu
+     * \author Romain Mekarni
+     */
     static void render(Board b)
     {
-        b.indicators[0].value = Box.ballFocus.id;
-        b.indicators[1].value = Box.ballFocus.v.m;
-        b.indicators[2].value = Box.ballFocus.v.a * 180 / Math.PI;
-        b.indicators[3].value = Box.ballFocus.p.x;
-        b.indicators[4].value = Box.ballFocus.p.y;
-        b.indicators[5].value = Box.ballFocus.r;
-        b.indicators[6].value = Window.fps;
-        b.graphs[0].indicator.value = Box.nbChoc;
-        Box.nbChoc = 0;
-        b.graphs[1].indicator.value = Box.vmoy;
-        render(b.indicators[0]);
-        render(b.indicators[1]);
-        render(b.indicators[2]);
-        render(b.indicators[3]);
-        render(b.indicators[4]);
-        render(b.indicators[5]);
-        render(b.indicators[6]);
-        render(b.graphs[0]);
-        render(b.graphs[1]);
+        for (int i = 0; i < b.nbIndicators; i++)
+            Indicator.render(b.indicators[i]);
+        for (int i = 0; i < b.nbGraphs; i++)
+            Graph.render(b.graphs[i]);
     }
 }
 

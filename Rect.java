@@ -5,7 +5,9 @@
  */
 
  /**
+ * \class Rect
  * \brief Classe représentant un rectangle soit sa taille et sa position
+ * \author Romain Mekarni
  */
 public class Rect
 {
@@ -14,13 +16,9 @@ public class Rect
 	int w;	///<Longueur
 	int h;	///<Largeur
 /**
- * Cree un rectangle avec des dimensions donnees
- * @param x
- * @param y
- * @param w
- * @param h
- * @return
- */	
+ * \brief Constructeur
+ * \author Romain Mekarni
+ */
 	static Rect make(int x, int y, int w, int h)
 	{
 		Rect rect = new Rect();
@@ -31,19 +29,15 @@ public class Rect
 		return rect;
 	}
 /**
- * Rempli un rectangle
- * @param rect
+ * \brief Rempli un rectangle avec EcranGraphique
  */
 	static void fill(Rect rect)
 	{
 		EcranGraphique.fillRect(rect.x, rect.y, rect.w, rect.h);
 	}
 /**
- * Verifie si le point (x,y) est dans le rectangle rect
- * @param rect
- * @param x
- * @param y
- * @return
+ * \brief Vérifie si le point (x,y) est dans le rectangle rect
+ * \author Romain Mekarni
  */
 	static boolean isIn(Rect rect, int x, int y)
 	{

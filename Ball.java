@@ -1,7 +1,8 @@
 /**
  * \file Ball.java
  * \brief Représentation physique d'une boule et interaction avec les autres objets
- * \author Romain Mekarni, Baptiste Minervini
+ * \authors Romain Mekarni
+ * \authors Baptiste Minervini
  */
 
 import java.math.BigDecimal;
@@ -9,7 +10,8 @@ import java.math.BigDecimal;
 /**
  * \class Ball
  * \brief Gestion des Boules
- * \author Baptiste Minvervini, Romain Mekarni
+ * \authors Baptiste Minervini
+ * \authors Romain Mekarni
  */
 public class Ball
 {
@@ -22,8 +24,8 @@ public class Ball
 
 /**
  * \brief Détermine l'instant ou aura lieu le choc entre 1 boule et un mur, si il existe
- * @return L'instant du choc (-1 si pas de choc dans ]0;dt])
- * @author Romain Mekarni
+ * \return L'instant du choc (-1 si pas de choc dans ]0;dt])
+ * \author Romain Mekarni
  */
 	static BigDecimal dtChocBox(Box box, Ball b, BigDecimal dt)
     {
@@ -55,7 +57,7 @@ public class Ball
 
 /**
  * \brief Calcul les nouveaux angles après un choc Boule/Mur
- * @author Romain Mekarni
+ * \author Romain Mekarni
  */
 	static void chocBox(Box box, Ball b)
     {
@@ -72,8 +74,8 @@ public class Ball
 
 /**
  * \brief Calcul l'instant de choc entre 2 boules
- * @return L'instant du choc (-1 si pas de choc dans ]0;dt])
- * @author Romain Mekarni
+ * \return L'instant du choc (-1 si pas de choc dans ]0;dt])
+ * \author Romain Mekarni
  */
     static BigDecimal dtChocBalls(Box box, Ball b1, Ball b2, BigDecimal dt)
     {
@@ -87,7 +89,16 @@ public class Ball
         if (a != 0) // Division par 0
         {
             if (delta > 0)
-                t = new BigDecimal(Math.min(Math.abs((-b + Math.sqrt(delta)) / (2 * a)), Math.abs((-b - Math.sqrt(delta)) / (2 * a)))).setScale(box.s, box.r);
+            {
+                double x1 = (-b + Math.sqrt(delta)) / (2*a);
+                double x2 = (-b - Math.sqrt(delta)) / (2*a);
+                if (x1 > 0 && x2 > 0)
+                    t = new BigDecimal(Math.min(x1, x2)).setScale(box.s, box.r);
+                else if (x1 > 0)
+                    t = new BigDecimal(x1).setScale(box.s, box.r);
+                else if (x2 > 0)
+                    t = new BigDecimal(x2).setScale(box.s, box.r);
+            }
             else if (delta == 0)
                 t = new BigDecimal((-b) / (2 * a)).setScale(box.s, box.r);
         }
@@ -98,7 +109,7 @@ public class Ball
 
 /**
  * \brief Calcul les nouveaux angles et vitesses aux Boules apres un choc Boule/Boule
- * @author Romain Mekarni
+ * \author Romain Mekarni
  */
 	static void chocBalls(Ball b1, Ball b2)
     {

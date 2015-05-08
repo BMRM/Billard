@@ -1,7 +1,8 @@
 /**
  * \file Box.java
  * \brief Moteur physique - Simulation du Billard
- * \author Baptiste Minervini, Romain Mekarni
+ * \authors Baptiste Minervini
+ * \authors Romain Mekarni
  */
 
 import java.math.BigDecimal;
@@ -11,7 +12,8 @@ import java.math.RoundingMode;
 /**
  * \class Box
  * \brief Moteur physique
- * @author Baptiste Minervini, Romain Mekarni
+ * \authors Baptiste Minervini
+ * \authors Romain Mekarni
  */
 public class Box
 {
@@ -28,32 +30,33 @@ public class Box
     boolean         run = false;///<Flag d'exécution du système physique
     double          friction = 0.01;
     int             baseBalls = 5;///<Taille du triangle de boules
-
-    int     nbBalls;
-    Ball    balls[];
+    int             nbBalls; ///<Nombre de boules
+    Ball            balls[];///<Tableau de boules
 
     /**
      * \brief Constructeur de Box
-     * @author Baptiste Minervini, Romain Mekarni
+     * \authors Baptiste Minervini
+     * \authors Romain Mekarni
      */
-	static Box make(int nbBalls)
+	static Box make()
 	{
         Box box = new Box();
-        box.nbBalls = nbBalls;
-		box.balls = new Ball[nbBalls];
-        for (int i = 0; i < nbBalls; i++)
+        box.nbBalls = (box.baseBalls * (box.baseBalls + 1) / 2) + 1;
+		box.balls = new Ball[box.nbBalls];
+        for (int i = 0; i < box.nbBalls; i++)
         {
             box.balls[i] = new Ball();
             box.balls[i].id = i;
             box.balls[i].r = box.rayon;
             box.balls[i].m = 1;
         }
-        box.ballFocus = box.balls[nbBalls - 1];
+        box.ballFocus = box.balls[box.nbBalls - 1];
         posTriangle(box);
+        return box;
     }
 /**
  * \brief Fait evoluer le systeme physique de Box.dt
- * @author Romain Mekarni
+ * \author Romain Mekarni
  */
     static void update(Box box)
     {
@@ -67,8 +70,8 @@ public class Box
 
 /**
  * \brief évolue jusqu'au prochain état avant dt
- * @return temps t du prochain état du système
- * @author Romain Mekarni
+ * \return temps t du prochain état du système
+ * \author Romain Mekarni
  */
 	static double	update(Box box, double dt)
 	{
@@ -112,7 +115,7 @@ public class Box
 	}
 /**
  * \brief Applique les événements mémorisés dans un changement d'état
- * @author Romain Mekarni
+ * \author Romain Mekarni
  */
 	static void pollEvent(Box box, Stack stack)
 	{
@@ -135,7 +138,8 @@ public class Box
 	}
 /**
  * \brief Déplace la boule b d'un temps dt avec une friction
- * @author Baptiste Minervini, Romain Mekarni
+ * \authors Baptiste Minervini
+ * \authors Romain Mekarni
  */
 	static void evolve(Box box, Ball b, double dt)
 	{
@@ -148,7 +152,7 @@ public class Box
 	}
 /**
  * \brief Positionne les boules en ligne
- * @author Baptiste Minervini
+ * \author Baptiste Minervini
  */
 	static void posLine(Box box)
 	{
@@ -163,7 +167,7 @@ public class Box
 	}
 /**
  * \brief Positionne les boules en triangle
- * @author Baptiste Minervini
+ * \author Baptiste Minervini
  */
 	static void posTriangle(Box box)
 	{
