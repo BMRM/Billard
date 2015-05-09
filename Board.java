@@ -16,7 +16,7 @@ class Indicator
 {
     String  name;
     String  unite;
-    double  value;
+    double  value = 0;
     int     precision = 2;
     Rect    size; ///< Position dans le bandeau
 
@@ -119,7 +119,7 @@ class Graph
  */
 public class Board
 {
-    int         nbIndicators = 7;///<Nombre de Indicator dans le bandeau
+    int         nbIndicators = 8;///<Nombre de Indicator dans le bandeau
     int         nbGraphs = 2;///<Nombre de graphiques
     Rect        size;///<Position et taille
     Indicator   indicators[];///<Tableau de Indicator
@@ -142,6 +142,7 @@ public class Board
         b.indicators[4] = Indicator.make("Position.y : ", " m", 2, Rect.make(size.x + 550, size.y + 140, 50, 30));
         b.indicators[5] = Indicator.make("Rayon : ", " m", 2, Rect.make(size.x + 550, size.y + 170, 50, 30));
         b.indicators[6] = Indicator.make("FPS : ", "", 0, Rect.make(size.x + 690, size.y + 20, 50, 30));
+        b.indicators[7] = Indicator.make("t : ", " s", 2, Rect.make(size.x + 15, size.y - 20, 50, 30));
         b.graphs = new Graph[b.nbGraphs];
         b.graphs[0] = Graph.make("Nombre de chocs : ", " par dt", 0, 10, Rect.make(size.x + 15, size.y + 10, 240, 150));
         b.graphs[1] = Graph.make("Vitesse moyenne : ", " m/s", 2, 100, Rect.make(size.x + 280, size.y + 10, 240, 150));
@@ -161,6 +162,7 @@ public class Board
         b.indicators[4].value = box.ballFocus.p.y;
         b.indicators[5].value = box.ballFocus.r;
         b.indicators[6].value = win.fps;
+        b.indicators[7].value = box.t;
         b.graphs[0].indicator.value = box.nbChoc;
         box.nbChoc = 0;
         b.graphs[1].indicator.value = box.vmoy;

@@ -61,13 +61,13 @@ public class Ball
  */
 	static void chocBox(Box box, Ball b)
     {
-        if (new BigDecimal(b.p.x - b.r).setScale(box.s, box.r).compareTo(BigDecimal.ZERO) == 0)
+        if (new BigDecimal(b.p.x - b.r).setScale(box.s, box.r).compareTo(BigDecimal.ZERO) <= 0)
             b.v.x *= -1;
-        else if (new BigDecimal(b.p.x + b.r - box.length).setScale(box.s, box.r).compareTo(BigDecimal.ZERO) == 0)
+        else if (new BigDecimal(b.p.x + b.r - box.length).setScale(box.s, box.r).compareTo(BigDecimal.ZERO) >= 0)
             b.v.x *= -1;
-        else if (new BigDecimal(b.p.y - b.r).setScale(box.s, box.r).compareTo(BigDecimal.ZERO) == 0)
+        else if (new BigDecimal(b.p.y - b.r).setScale(box.s, box.r).compareTo(BigDecimal.ZERO) <= 0)
             b.v.y *= -1;
-        else if (new BigDecimal(b.p.y + b.r - box.width).setScale(box.s, box.r).compareTo(BigDecimal.ZERO) == 0)
+        else if (new BigDecimal(b.p.y + b.r - box.width).setScale(box.s, box.r).compareTo(BigDecimal.ZERO) >= 0)
             b.v.y *= -1;
         Vector.formePol(b.v);
     }
@@ -80,30 +80,39 @@ public class Ball
     static BigDecimal dtChocBalls(Box box, Ball b1, Ball b2, BigDecimal dt)
     {
         // Choc equation : a.dt.dt + b.dt + c = 0
-        BigDecimal t = BigDecimal.ZERO;
+        double t = 0;
         double b = 2 * (b1.v.x - b2.v.x) * (b1.p.x - b2.p.x) + 2 * (b1.v.y - b2.v.y) * (b1.p.y - b2.p.y);
         double a = Math.pow(b1.v.x - b2.v.x, 2) + Math.pow(b1.v.y - b2.v.y, 2);
         double c = Math.pow(b1.p.x - b2.p.x, 2) + Math.pow(b1.p.y - b2.p.y, 2) - Math.pow(b1.r + b2.r, 2);
         double delta = Math.pow(b, 2) - 4 * a * c;
 
-        if (a != 0) // Division par 0
+        /*if (a == 0) // Division par 0
         {
-            if (delta > 0)
-            {
-                double x1 = (-b + Math.sqrt(delta)) / (2*a);
-                double x2 = (-b - Math.sqrt(delta)) / (2*a);
-                if (x1 > 0 && x2 > 0)
-                    t = new BigDecimal(Math.min(x1, x2)).setScale(box.s, box.r);
-                else if (x1 > 0)
-                    t = new BigDecimal(x1).setScale(box.s, box.r);
-                else if (x2 > 0)
-                    t = new BigDecimal(x2).setScale(box.s, box.r);
-            }
-            else if (delta == 0)
-                t = new BigDecimal((-b) / (2 * a)).setScale(box.s, box.r);
+            if (b != 0) // Division par 0
+                t = -c / b;
         }
-        if (t.compareTo(BigDecimal.ZERO) > 0 && t.compareTo(dt) <= 0)
-            return t;
+        else if (delta > 0)
+        {
+            double x1 = (-b + Math.sqrt(delta)) / (2*a);
+            double x2 = (-b - Math.sqrt(delta)) / (2*a);
+            if (x1 > 0 && x2 > 0)
+                t = Math.min(x1, x2);
+            else if (x1 > 0)
+                t = x1;
+            else if (x2 > 0)
+                t = x2;
+        }
+        else if (delta == 0)
+            t = -b / (2 * a);*/
+        if (a != 0)
+        {
+             if (delta > 0)
+                 t = Math.min((-b + Math.sqrt(delta)) / (2 * a), (-b - Math.sqrt(delta)) / (2 * a));
+             else if (delta == 0)
+                 t = (-b) / (2 * a);
+        }
+        if (t > 0 && t <= dt.doubleValue())
+            return new BigDecimal(t).setScale(box.s, box.r);
         return BigDecimal.ONE.negate();
     }
 

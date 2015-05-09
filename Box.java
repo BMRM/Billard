@@ -18,6 +18,7 @@ import java.math.RoundingMode;
 public class Box
 {
     double          dt = 0.05; ///<Pas de temps
+    double          t = 0;///<Temps absolu
     double          rayon = 0.03; ///<Rayon des boules
     double          width = 1.27; ///<Largeur du billard
     double          length = 2.54; ///<Longueur du billard
@@ -28,7 +29,7 @@ public class Box
     double          vmoy = 0;///<Compteur vitesse moyenne du système
     Ball            ballFocus;///<Boule ciblée pour interaction
     boolean         run = false;///<Flag d'exécution du système physique
-    double          friction = 0.01;
+    double          friction = 0.1;
     int             baseBalls = 5;///<Taille du triangle de boules
     int             nbBalls; ///<Nombre de boules
     Ball            balls[];///<Tableau de boules
@@ -65,6 +66,12 @@ public class Box
             double t = 0;
             while (t < box.dt)
                 t += update(box, box.dt - t);
+            for (int i = 0; i < box.nbBalls; i++) // Prise en compte des frottements
+            {
+                box.balls[i].v.x *= 1 - box.friction * box.dt;
+                box.balls[i].v.y *= 1 - box.friction * box.dt;
+            }
+            box.t += box.dt;
         }
     }
 
@@ -145,8 +152,6 @@ public class Box
 	{
 		b.p.x += dt * b.v.x;
 		b.p.y += dt * b.v.y;
-		b.v.x *= 1 - box.friction;
-		b.v.y *= 1 - box.friction;
         b.r = box.rayon;
         Vector.formePol(b.v);
 	}
@@ -164,6 +169,7 @@ public class Box
 			box.balls[i].v.x = Math.random() - 0.5;
 	        box.balls[i].v.y = Math.random() - 0.5;
 		}
+        box.t = 0;
 	}
 /**
  * \brief Positionne les boules en triangle
@@ -191,6 +197,7 @@ public class Box
 			}
 			decal += (2 * box.balls[i].r);
 		}
+        box.t = 0;
 	}
 }
 

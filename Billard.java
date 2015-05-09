@@ -45,11 +45,11 @@ public class Billard
             }
             Input.update(input, box, win);
             Box.update(box);
-            Window.update(win, box, input);
             if (win.fps > 0) // Si le blocage fps est activé
 			    EcranGraphique.wait((int)Math.max(0, 1000 / (double)win.fps - (System.nanoTime() - elapsed) / 1000000));
             win.fps = (int)(1000 / (double)((System.nanoTime() - elapsed) / 1000000)); // Récupère la valeur courante du fps
             elapsed = System.nanoTime(); // Temps écoulé
+            Window.update(win, box, input);
 			Window.render(win, box, input);
 		}
 		EcranGraphique.exit();

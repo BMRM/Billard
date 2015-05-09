@@ -5,6 +5,8 @@
  * \authors Romain Mekarni
  */
 
+import java.math.MathContext;
+
 /**
  * \class Menu
  * \brief menu interactif à disposition de l'utilisateur
@@ -62,6 +64,7 @@ public class Menu
 	{
         box.dt = Double.valueOf(menu.buttons[4].title[1]);
         box.s = Integer.valueOf(menu.buttons[5].title[1]);
+        box.p = new MathContext(box.s, box.r);
         win.fps = Integer.valueOf(menu.buttons[6].title[1]);
         box.rayon = Double.valueOf(menu.buttons[7].title[1]);
         box.ballFocus = box.balls[Integer.valueOf(menu.buttons[8].title[1])];
