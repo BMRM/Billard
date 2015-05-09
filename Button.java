@@ -21,7 +21,7 @@ public class Button
     int     state = 0;///<Etats du bouton
 /**
  * \brief Constructeur
- * \param titles Tableau de chaines contenant les libellés du bouton
+ * \param title Tableau de chaines contenant le libellé du bouton
  * \param size Taille et position du bouton
  * \authors Baptiste Minervini
  * \authors Romain Mekarni
@@ -38,7 +38,7 @@ public class Button
         return button;
 	}
 /**
- * \Détermine l'état du bouton
+ * \brief Détermine l'état du bouton
  * \return Clique enfoncé sur bouton = true
  * \authors Baptiste Minervini
  * \authors Romain Mekarni
