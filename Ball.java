@@ -86,24 +86,6 @@ public class Ball
         double c = Math.pow(b1.p.x - b2.p.x, 2) + Math.pow(b1.p.y - b2.p.y, 2) - Math.pow(b1.r + b2.r, 2);
         double delta = Math.pow(b, 2) - 4 * a * c;
 
-        /*if (a == 0) // Division par 0
-        {
-            if (b != 0) // Division par 0
-                t = -c / b;
-        }
-        else if (delta > 0)
-        {
-            double x1 = (-b + Math.sqrt(delta)) / (2*a);
-            double x2 = (-b - Math.sqrt(delta)) / (2*a);
-            if (x1 > 0 && x2 > 0)
-                t = Math.min(x1, x2);
-            else if (x1 > 0)
-                t = x1;
-            else if (x2 > 0)
-                t = x2;
-        }
-        else if (delta == 0)
-            t = -b / (2 * a);*/
         if (a != 0)
         {
              if (delta > 0)

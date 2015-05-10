@@ -8,7 +8,7 @@
  * \mainpage Projet Billard
  * \authors Baptiste Minervini baptiste.minervini@outlook.com
  * \authors Romain Mekarni romain.mekarni@gmail.com
- * \date Licence 1 Semestre 2
+ * \date Licence 1 Semestre 2 : 03/2015 - 05/2015
  * \tableofcontents
  * \section intro_sec Présentation
  * Ce programme est une simulation physique d'un billard qui prend en compte les chocs entre boules et avec les murs. Il exploite un module physique indépendant du graphique. L'affichage est réglé selon un FPS, et le moteur physique selon un dt (pas de temps). Ces deux variables sont indépendantes et permettent d'observer à plusieurs vitesses l'évolution du système physique.
@@ -21,19 +21,25 @@
  * - doxygen doxyfile
  * - cd latex && make   (pour la documentation latex)
  * \section tools_subsec Dépendances
- * - EcranGraphique
- * - Clavier
- * - Ecran
+ * <a href="http://raphaello.univ-fcomte.fr/Algo-S2/14-15-Projets/Docs/index.html">Documentation</a>
+ * - <a href="http://raphaello.univ-fcomte.fr/Algo-S2/EcranGraphique/EcranGraphique.zip">EcranGraphique</a>
+ * - <a href="http://raphaello.univ-fcomte.fr/Algo-S2/14-15-Projets/Ecran.class">Ecran</a>
+ * - <a href="http://raphaello.univ-fcomte.fr/Algo-S2/14-15-Projets/Clavier.class">Clavier</a>
+ *
  * \section devel_sec Développement
+ *
  * \subsection devel1_subsec Premier jet graphique
  * Afin de prendre en main l'environnement, les bibliothèques, le premier jet est basé essentiellement sur l'aspect graphique. A partir de types agrégés, on affiche le billard et les Boules qui se déplacent sans prise en compte des chocs.
+ *
  * \subsection devel2_subsec Séparation physique et graphique
  * Le billard est un système physique qui possède ses propres unités de mesure de temps et de distance qui ne sont pas les mêmes que pour le moteur graphique. Par ailleurs, la fonction de l'outil graphique est d'apporter un visuel sur le système. C'est un outil que l'on peut ajouter pour mieux observer la simulation. Il devient donc évident de séparer dans le code les fonctions physiques du graphique et on obtient alors plusieurs classes aux rôles bien définies. Ainsi, la classe Box s'occupe du système physique avec la classe Ball qui représente physiquement une boule de billard. La partie graphique est gérée par les classes Window et RenderBall.
  * \subsection devel3_subsec Ajout des chocs entre boules et contre les murs
  * A l'aide de conditions, on change les vitesses et les angles des boules mais très vite on observe les limites de ce modèle trop simpliste. Premièrement, les chocs ne sont pas détectés au bon moment précis (parfois trop tôt, ou trop tard) ce qui détruit progressivement le réalisme de la simulation. Ensuite, les angles ne sont pas justes car ils dépendent de plusieurs paramètres et nécessitent des calculs plus compliqués. Enfin, le modèle ne prend pas en compte plusieurs chocs simultanés (très visible au début de la simulation quand les boules sont disposées en triangle).
+ *
  * \subsection devel4_subsec Implémentation des calculs physiques
  * Avec l'aide d'internet, on refait les calculs physiques et on les implémente dans le programme (voir Physique et Mathématiques). Les vitesses sont correctes mais les angles d'après choc entre boules ne sont pas toujours exacts : les directions s'en approchent, mais souvent les sens sont inversés. Le programme bug assez souvent car il détecte des chocs à des temps très faibles (trop faible pour faire avancer les boules) ce qui provoque une boucle infinie.
- * \subsection devel5_subsec Gestion de la précision synchronisaton avec la boucle principale
+ *
+ * \subsection devel5_subsec Gestion de la précision et synchronisaton avec la boucle principale
  * Pour régler ce problème de précision, on a choisit d'utiliser la classe BigDecimal fournie par Java et qui nous permet de représenter des nombres décimaux selon un contexte mathématique (nombre de chiffres significatifs et méthode d'arrondissement) On remarque qu'avec une précision de moins de 5, certains chocs sont ignorés, alors qu'au dessus de 10 ou 15, la boucle infinie peut éventuellement faire planter le programme. A 8, on a relevé aucun bug apparent. \n
  * Pour faire évoluer le système physique, on utilise l'algorithme suivent :
  *  - Pour chaque boules
@@ -68,9 +74,12 @@
  *  \end{array} \right .
  * \f}
  * \subsection ChocBalls_subsec Calcul des vitesses et angles après choc entre deux boules
+ * Etude réalisée grace au document de <a href="owl-ge.ch/IMG/pdf/choc_2D_avec_citation.pdf">Pascal Rebetez</a>\n
+ * Afin de calculer les nouvelles vitesses des boules après un choc, il est nécessaire de changer de repère pour simplifier les calculs. On utilise le repère suivant :
  * \image html "schema_choc.png"
  * \latexonly \begin{figure}[!h] \caption{Choc élastique en 2 dimensions.} \centering
  * \includegraphics[width=\textwidth - 5cm]{../schema_choc.png} \end{figure} \endlatexonly
+ * On limite cette étude au cas où les boules ne sont pas en rotation autour de leur centre, elles ne sont animées que d'un mouvement de translation. Pour déterminer les 4 nouveaux paramètres (norme et orientation des vitesses de chaque boules), on dispose de trois principes de conservation : le principe de conservation de la quantité de mouvement, le principe de conservation de l'énergie mécanique (le choc étant supposé élastique, l'énergie cinétique est conservée) et le principe de conservation du moment cinétique. De ces équations, on obtient les solutions suivantes :
  * \f{eqnarray*}{
  * \theta_1' &=& \arctan \left( \frac{m_1 - m_2}{m_1 + m_2} \tan \theta_1 + \frac{2 m_2}{m_1 + m_2} \frac{v_2}{v_1} \frac{\sin \theta_2}{\cos \theta_1} \right) \\
  * v_1' &=& \sqrt{\left( \frac{m_1 - m_2}{m_1 + m_2} v_1 \sin \theta_1 + \frac{2 m_2}{m_1 + m_2} v_2 \sin \theta_2 \right)^2 + (v_1 \cos \theta_1)^2} \\
