@@ -61,8 +61,12 @@
  *  - Renvoyer le temps de choc le plus proche (dt si inexistant)
  *  .
  * Cet algorithme est appelé plusieurs fois tant qu'il n'a pas atteint le dt imposé par le programme (la boucle principale). Cela permet de garder notre système physique cohérent même si l'affichage graphique varie en fonction des performances de l'ordinateur (un dt à 500 ou 1000 réduit considérablement le FPS car les calculs sont très conséquents).
+ *
  * \section mathphys_sec Physique et Mathématiques
+ * Déterminer les chocs entre boules est assez complexe en physique et exploite plusieurs équations physiques de description du mouvement et des énergies.
+
  * \subsection dtChocBalls_subsec Temps de choc entre deux boules
+ * Pour détecter si deux boules se rencontrent, on cherche un point de rencontre entre les deux équations de trajectoires. Après reformulation, on trouve une équation du second degré :
  * \f[
  * a.dt^2 + b.dt + c = 0
  * \f]
@@ -73,6 +77,8 @@
  *  c &=& (b_{1.p.x} - b_{2.p.x})^2 + (b_{1.p.y} - b_{2.p.y})^2 - (b_{1.r} + b_{2.r})^2
  *  \end{array} \right .
  * \f}
+ * Avec le déterminant, on récupère les solutions, si elles existent, en veillant bien à prendre la plus petite positive.
+ *
  * \subsection ChocBalls_subsec Calcul des vitesses et angles après choc entre deux boules
  * Etude réalisée grace au document de <a href="owl-ge.ch/IMG/pdf/choc_2D_avec_citation.pdf">Pascal Rebetez</a>\n
  * Afin de calculer les nouvelles vitesses des boules après un choc, il est nécessaire de changer de repère pour simplifier les calculs. On utilise le repère suivant :
