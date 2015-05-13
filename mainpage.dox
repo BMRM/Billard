@@ -112,5 +112,9 @@
  * \f}
  * \section difficulte_sec Difficultés rencontrées
  * \subsection converPolaire_subsec Conversion entre système polaire et cartésien
- * à partir de <a href="http://fr.wikipedia.org/wiki/Coordonn%C3%A9es_polaires#Conversion_entre_syst.C3.A8me_polaire_et_cart.C3.A9sien">Wikipédia</a>
+ * Problèmes lors du calcul de l'angle de rotation pour le changement de repère car il faisait intervenir la fonction arctan qui possède de nombreux cas particuliers à gérer. \n
+ * De plus, il a fallut de nombreux essais pour prendre conscience que pour changer un repère il ne suffit pas de modifier l'angle des vecteurs en question, il faut utiliser une matrice de passage pour changer de base, et y revenir une fois les calculs faits. 
+ * A partir de <a href="http://fr.wikipedia.org/wiki/Coordonn%C3%A9es_polaires#Conversion_entre_syst.C3.A8me_polaire_et_cart.C3.A9sien">Wikipédia</a> on obtient enfin des calculs correctes qui se vérifient graphiquement.\n
+ * Une autre difficulté a été de concevoir le programme sans utiliser la programmation orientée objet. Il faut sans arrêt transmettre en argument les types agrégés considérés aux fonctions statiques.\n
+ * Faire du graphique avec une bibliothèque bas niveau qui ne permet que de dessiner des formes géométriques est assez casse-tête (surtout pour faire des menus, boutons etc..) Cette partie du programme impose plus de types agrégés et de nombreuses fonctions supplémentaires pour un traitement optimal (sans répétition de code).
  */
