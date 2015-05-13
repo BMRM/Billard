@@ -25,6 +25,24 @@
  * - <a href="http://raphaello.univ-fcomte.fr/Algo-S2/EcranGraphique/EcranGraphique.zip">EcranGraphique</a>
  * - <a href="http://raphaello.univ-fcomte.fr/Algo-S2/14-15-Projets/Ecran.class">Ecran</a>
  * - <a href="http://raphaello.univ-fcomte.fr/Algo-S2/14-15-Projets/Clavier.class">Clavier</a>
+ * 
+ * \section utilisation_sec Notice d'utilisation
+ *
+ * Dans la fenêtre graphique, il y a 11 boutons à disposition de l'utilisateur :
+ * - Billard classique : dispose les boules en configuration du jeu billard
+ * - Boules en ligne : mode demandé par l'énoncé du projet
+ * - Jeu manuel : utilisation de la queue de billard sur la boule ciblée. Cliquer sur bouton droit de la souris pour tirer
+ * - Démarrer / Pause : met en pause ou reprend l'évolution du système physique
+ * - dt (Box.dt) : vitesse d'évolution du moteur physique (cliquez pour modifier)
+ * - Precision (Box.s) : nombre de chiffres significatifs pris en compte dans les calculs physiques
+ * - FPS (Window.fps) : Nombre d'images affichées par seconde. 0 pour désactiver le blocage (affiche dès que les calculs sont finis, variable selon l'ordinateur)
+ * - Rayon (Box.rayon) : taille en mètre des boules de billard
+ * - Boule (Box.ballFocus) : mécanisme de ciblage d'une boule pour interagir avec le jeu manuel et afficher ses informations dans le bandeau
+ * - Frottement (Box.friction) : valeur prise en compte dans les calculs de vitesse des boules à chaque dt
+ * - Quitter : stop proprement le programme
+ * .
+ * Le bandeau d'informations contient 2 graphiques : le premier affiche le nombre de chocs pris en compte dans un dt, et le second affiche la somme des vitesses des boules du système. A droite s'affiche les informations (position, vitesse, angle) de la boule ciblée.\n
+ * Lors de la saisie de données, appuyer sur Entrée pour valider la saisie. Il est possible d'annuler en appuyant sur la touche échap.
  *
  * \section devel_sec Développement
  *
