@@ -25,6 +25,24 @@
  * - <a href="http://raphaello.univ-fcomte.fr/Algo-S2/EcranGraphique/EcranGraphique.zip">EcranGraphique</a>
  * - <a href="http://raphaello.univ-fcomte.fr/Algo-S2/14-15-Projets/Ecran.class">Ecran</a>
  * - <a href="http://raphaello.univ-fcomte.fr/Algo-S2/14-15-Projets/Clavier.class">Clavier</a>
+ * 
+ * \section utilisation_sec Notice d'utilisation
+ *
+ * Dans la fenêtre graphique, il y a 11 boutons à disposition de l'utilisateur :
+ * - Billard classique : dispose les boules en configuration du jeu billard
+ * - Boules en ligne : mode demandé par l'énoncé du projet
+ * - Jeu manuel : utilisation de la queue de billard sur la boule ciblée. Cliquer sur bouton droit de la souris pour tirer
+ * - Démarrer / Pause : met en pause ou reprend l'évolution du système physique
+ * - dt (Box.dt) : vitesse d'évolution du moteur physique (cliquez pour modifier)
+ * - Precision (Box.s) : nombre de chiffres significatifs pris en compte dans les calculs physiques
+ * - FPS (Window.fps) : Nombre d'images affichées par seconde. 0 pour désactiver le blocage (affiche dès que les calculs sont finis, variable selon l'ordinateur)
+ * - Rayon (Box.rayon) : taille en mètre des boules de billard
+ * - Boule (Box.ballFocus) : mécanisme de ciblage d'une boule pour interagir avec le jeu manuel et afficher ses informations dans le bandeau
+ * - Frottement (Box.friction) : valeur prise en compte dans les calculs de vitesse des boules à chaque dt
+ * - Quitter : stop proprement le programme
+ * .
+ * Le bandeau d'informations contient 2 graphiques : le premier affiche le nombre de chocs pris en compte dans un dt, et le second affiche la somme des vitesses des boules du système. A droite s'affiche les informations (position, vitesse, angle) de la boule ciblée.\n
+ * Lors de la saisie de données, appuyer sur Entrée pour valider la saisie. Il est possible d'annuler en appuyant sur la touche échap.
  *
  * \section devel_sec Développement
  *
@@ -61,8 +79,12 @@
  *  - Renvoyer le temps de choc le plus proche (dt si inexistant)
  *  .
  * Cet algorithme est appelé plusieurs fois tant qu'il n'a pas atteint le dt imposé par le programme (la boucle principale). Cela permet de garder notre système physique cohérent même si l'affichage graphique varie en fonction des performances de l'ordinateur (un dt à 500 ou 1000 réduit considérablement le FPS car les calculs sont très conséquents).
+ *
  * \section mathphys_sec Physique et Mathématiques
+ * Déterminer les chocs entre boules est assez complexe en physique et exploite plusieurs équations physiques de description du mouvement et des énergies.
+
  * \subsection dtChocBalls_subsec Temps de choc entre deux boules
+ * Pour détecter si deux boules se rencontrent, on cherche un point de rencontre entre les deux équations de trajectoires. Après reformulation, on trouve une équation du second degré :
  * \f[
  * a.dt^2 + b.dt + c = 0
  * \f]
@@ -73,6 +95,8 @@
  *  c &=& (b_{1.p.x} - b_{2.p.x})^2 + (b_{1.p.y} - b_{2.p.y})^2 - (b_{1.r} + b_{2.r})^2
  *  \end{array} \right .
  * \f}
+ * Avec le déterminant, on récupère les solutions, si elles existent, en veillant bien à prendre la plus petite positive.
+ *
  * \subsection ChocBalls_subsec Calcul des vitesses et angles après choc entre deux boules
  * Etude réalisée grace au document de <a href="owl-ge.ch/IMG/pdf/choc_2D_avec_citation.pdf">Pascal Rebetez</a>\n
  * Afin de calculer les nouvelles vitesses des boules après un choc, il est nécessaire de changer de repère pour simplifier les calculs. On utilise le repère suivant :
@@ -88,5 +112,9 @@
  * \f}
  * \section difficulte_sec Difficultés rencontrées
  * \subsection converPolaire_subsec Conversion entre système polaire et cartésien
- * à partir de <a href="http://fr.wikipedia.org/wiki/Coordonn%C3%A9es_polaires#Conversion_entre_syst.C3.A8me_polaire_et_cart.C3.A9sien">Wikipédia</a>
+ * Problèmes lors du calcul de l'angle de rotation pour le changement de repère car il faisait intervenir la fonction arctan qui possède de nombreux cas particuliers à gérer. \n
+ * De plus, il a fallut de nombreux essais pour prendre conscience que pour changer un repère il ne suffit pas de modifier l'angle des vecteurs en question, il faut utiliser une matrice de passage pour changer de base, et y revenir une fois les calculs faits. 
+ * A partir de <a href="http://fr.wikipedia.org/wiki/Coordonn%C3%A9es_polaires#Conversion_entre_syst.C3.A8me_polaire_et_cart.C3.A9sien">Wikipédia</a> on obtient enfin des calculs correctes qui se vérifient graphiquement.\n
+ * Une autre difficulté a été de concevoir le programme sans utiliser la programmation orientée objet. Il faut sans arrêt transmettre en argument les types agrégés considérés aux fonctions statiques.\n
+ * Faire du graphique avec une bibliothèque bas niveau qui ne permet que de dessiner des formes géométriques est assez casse-tête (surtout pour faire des menus, boutons etc..) Cette partie du programme impose plus de types agrégés et de nombreuses fonctions supplémentaires pour un traitement optimal (sans répétition de code).
  */
